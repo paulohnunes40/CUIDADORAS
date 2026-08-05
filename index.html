@@ -633,6 +633,23 @@
     <div class="card">
       <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>Histórico de evoluções<span id="statusConexao" class="status-conexao">conectando...</span></h2>
       <div class="sub">Compartilhado entre as três cuidadoras</div>
+      <div class="grid-2" style="margin-bottom:12px">
+        <div>
+          <label class="campo-label" style="margin-top:0">Mês</label>
+          <select id="filtroMes" onchange="renderizarListaHistoricoFiltrado()">
+            <option value="">Todos os meses</option>
+          </select>
+        </div>
+        <div>
+          <label class="campo-label" style="margin-top:0">Cuidadora</label>
+          <select id="filtroCuidadora" onchange="renderizarListaHistoricoFiltrado()">
+            <option value="">Todas</option>
+            <option value="Edna">Edna</option>
+            <option value="Camila">Camila</option>
+            <option value="Kauane">Kauane</option>
+          </select>
+        </div>
+      </div>
       <div id="listaHistorico"></div>
     </div>
 
@@ -1182,10 +1199,44 @@
 
   window.renderHistorico = function(lista){
     cacheHistoricoAtual = lista;
+    popularFiltroMes(lista);
+    renderizarListaHistoricoFiltrado();
+  };
+
+  function popularFiltroMes(lista){
+    const select = document.getElementById('filtroMes');
+    const valorAtual = select.value;
+    const meses = new Map();
+    lista.forEach(r => {
+      const d = parseDataBR(r.dataFormatada);
+      if(!d) return;
+      const chave = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      if(!meses.has(chave)) meses.set(chave, capitalizar(d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })));
+    });
+    const chavesOrdenadas = [...meses.keys()].sort().reverse();
+    select.innerHTML = '<option value="">Todos os meses</option>' +
+      chavesOrdenadas.map(c => `<option value="${c}">${meses.get(c)}</option>`).join('');
+    if(chavesOrdenadas.includes(valorAtual)) select.value = valorAtual;
+  }
+
+  function renderizarListaHistoricoFiltrado(){
+    const mesFiltro = document.getElementById('filtroMes').value;
+    const cuidadoraFiltro = document.getElementById('filtroCuidadora').value;
+
+    const listaFiltrada = cacheHistoricoAtual.filter(r => {
+      if(cuidadoraFiltro && r.cuidadora !== cuidadoraFiltro) return false;
+      if(mesFiltro){
+        const d = parseDataBR(r.dataFormatada);
+        const chave = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : '';
+        if(chave !== mesFiltro) return false;
+      }
+      return true;
+    });
+
     const cont = document.getElementById('listaHistorico');
     if(!cont) return;
-    if(lista.length === 0){
-      cont.innerHTML = '<span class="vazio-aviso">Nenhuma evolução salva ainda</span>';
+    if(listaFiltrada.length === 0){
+      cont.innerHTML = '<span class="vazio-aviso">Nenhuma evolução encontrada com esse filtro</span>';
       return;
     }
 
@@ -1198,7 +1249,7 @@
     let mesAnterior = null;
     let diaAnterior = null;
 
-    lista.forEach(r => {
+    listaFiltrada.forEach(r => {
       const d = parseDataBR(r.dataFormatada);
       const chaveMes = d ? `${d.getFullYear()}-${d.getMonth()}` : 'sem-data';
 
@@ -1232,7 +1283,7 @@
     });
 
     cont.innerHTML = html;
-  };
+  }
 
   document.getElementById('listaHistorico').innerHTML = '<span class="vazio-aviso">Conectando ao histórico compartilhado...</span>';
 
