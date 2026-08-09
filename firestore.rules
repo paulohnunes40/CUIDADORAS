@@ -1,0 +1,55 @@
+rules_version = '2';
+
+// ATENÇÃO — o app não usa login (decisão do projeto). Sem autenticação, qualquer
+// pessoa que descubra o endereço do projeto consegue ler e gravar estes dados.
+// Estas regras NÃO substituem login: elas apenas limitam o estrago possível —
+// só as duas coleções esperadas existem, os documentos precisam ter o formato
+// certo, o tamanho é limitado e nada mais no banco fica acessível.
+// Se um dia quiser realmente proteger o prontuário, ative o Firebase Auth e
+// troque `true` por `request.auth != null` nas condições abaixo.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function textoCurto(campo, max) {
+      return !(campo in request.resource.data)
+        || (request.resource.data[campo] is string && request.resource.data[campo].size() <= max);
+    }
+
+    // Evoluções de plantão
+    match /evolucoes/{id} {
+      allow read: if true;
+
+      allow create, update: if
+        request.resource.data.keys().hasAll(['dataIso', 'turno', 'cuidadora'])
+        && request.resource.data.dataIso is string
+        && request.resource.data.dataIso.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.turno in ['Manhã', 'Tarde', 'Noite']
+        && request.resource.data.cuidadora is string
+        && request.resource.data.cuidadora.size() <= 40
+        && textoCurto('dataFormatada', 10)
+        && textoCurto('repasse', 40)
+        && textoCurto('textoParaCompartilhar', 8000);
+
+      allow delete: if true;
+    }
+
+    // Controle glicêmico — um documento por dia (id = data ISO)
+    match /glicemia/{dataIso} {
+      allow read: if true;
+
+      allow create, update: if
+        dataIso.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.mesAno is string
+        && request.resource.data.mesAno.matches('^[0-9]{4}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['data', 'dataIso', 'dia', 'mesAno', 'cafe', 'almoco', 'janta']);
+
+      allow delete: if false;   // registro glicêmico não é apagado, só corrigido
+    }
+
+    // Qualquer outra coleção fica fechada.
+    match /{documento=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -4,599 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Evolução · Registro de Plantão</title>
+<link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-app-compat.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/12.15.0/firebase-firestore-compat.min.js"></script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiB2aWV3Qm94PSIwIDAgNTEyIDUxMiI+IDxkZWZzPiAgPGxpbmVhckdyYWRpZW50IGlkPSJnIiB4MT0iMCIgeTE9IjAiIHgyPSI1MTIiIHkyPSI1MTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4gICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMzNDUwM0UiLz4gICA8c3RvcCBvZmZzZXQ9IjAuNTUiIHN0b3AtY29sb3I9IiM0RjdBNUUiLz4gICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNEOThFNEEiLz4gIDwvbGluZWFyR3JhZGllbnQ+IDwvZGVmcz4gPHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHJ4PSIxMTIiIGZpbGw9InVybCgjZykiLz4gPHBhdGggZD0iTTQxNiAyNTYgTDM1MiAyNTYgTDMwNCA0MDAgTDIwOCAxMTIgTDE2MCAyNTYgTDk2IDI1NiIgICAgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjRkZGREY4IiBzdHJva2Utd2lkdGg9IjMyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48L3N2Zz4=">
-<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAAD2AAAA9gAXp4RY0AAAAHdElNRQfqBxwXEiX5fbcSAAAE7ElEQVRYw72XS2xUVRjHf/9z753pdDotMYrQB22nD16FVookPmJCNOpCExfsDO7QsGLjY0NcGLaSsAWjCxIfiRuDIUJcGAOJ4SEt0BbbMi3Qdsoj0VBnpjOducfFzHRm2mLbMXFmc+65Oef3fef7f/+TK4B9B/bj+9Y4jumTeB/pTUlNklwkZIQkJEDFcWl+6Ryi9CyBUVbStKSfJJ2UYwas7/tnP/8W7TuwH8CVdBDxqaS2xYWLm/IEkCpAEmAq5yoTEEiTkj6T0WmszbqeZ8hm7UHECUmRquErZb4cjqQ2GU5IkE5mvnKzWduPOPo/wYt7RpCO1kRC112JQ0jRNcOBvBSqhoOEkaJGHHKR3lgPvK42DBLJdOq/wHEEruzrrqTmtcIj4To+eu8wAMe/PsnfqWTVcE8WF5rdxVZbpea+9dnW3sm+nj0AbG3r4PLIdVyZauF4sp5Zq+Ac47B3Ry/BYJBgIEj/9l4c85/geLIYmdXhABsi9TzX3QMWAPq6dtIQqc9roEq4C5hlC1doNYula0s7rZubiT+aJf5oltZNTXS1tONbqoJ7hbFZyV6X9rnj5I8/EAxxYfASFwYvEwiG6N+2C8cxVcMLASz39kplQ0Oknr7uHjKZFFdGrnPl1iCZTIrerp001NWXWrHsblgN7hbGZSIsLUZgC/+c79PV0kbr5ibuzk4Ti99lYuYed+/PsOXZRjqb27DWFtaXymGwOPg41sfFx2UJvKiD5QKCcG2YSG0dUl5zL+5+nkAgxMDYMHPJBJIYHB+ms6WDPVt7GLg9vAhHIlITYkMohFvI3pVlIZ0gm06V4IV5txxOAf7hux+wI9qNtXnJ19fVk86k+H30JrbQBtdGh3j7pdfo7dxOQ12EuWQiX65QLYffOUh3c3TRto3E5NQ435/5klw6WXESZlkHFIMp+z1OzHFp6BpjUxM4xsFxHGLxO9y7P8OWjU10NLVisRhr6W5uZc/WXiLhCKZ4bwDOCsfvAe7SDkjOpzj+zSki4XBFQIn5ZMH/86p/nEwwGLtFR0sHe7p6uHl7GE+Wvs6dBAM1/PLbeX6+eBZPwpUlm06QSycJLBGmW9l++Tom06k8rFygRqhguzJ5ax4YH+KtF15ld3QbT4XDuEBPdDsLmXlu/HGNv/58QNAxhYxZBi8FsK5bLS9URw4T8XtMPZihZWMjHZuaMYKmZxqZfTjN7OwdahyDZ8BDFe5XPnargRfnE8k5hiZGiDZH6evehQAvUMP4xDDp5GM8UWE6S/3AlS3zgXXCHYGLz9D4EJlMir07+unf0c9CJsV47CYOfj6AJ8DLSkBV8OLi6dk7xB/O0NrYDsD0TIz7s5MEjP4VvuiE1cLzG8F88jGjEyOLLRubHCGdnFtRcJXwsusYUw28mJ3P2O2bZBbSLCykmYjdwMVfA7zkhFkkd71wt6yG8XiM0bFBHMH9eIyA0arwQoALLtJU8WNkvfBiGbLzCX448wWebN5qtTrck8WBKSPpXPXwoq1CruB0a4GXXVLnjaRTkmLVwotHHTCsGV54F3PglAnWha5idExGc9XC1yK4JfA5A8eSOXPVLMxnAE5LHFH+w3HdcG8N8LJ3kwaOuLKnI04OZ/TiDba/0udb7HUZ82sB/rQHdZ6sKRfb+k+BYtZZV9x1Zb8z8EmN8c/lUO7lj3/kHzdEMDyMPKJMAAAAAElFTkSuQmCC">
-<link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,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">
-<link rel="apple-touch-icon" sizes="180x180" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAGYktHRAD/AP8A/6C9p5MAAAAJcEhZcwAAD2AAAA9gAXp4RY0AAAAHdElNRQfqBxwXEiX5fbcSAAAm0ElEQVR42u2deYxd133fP9/z3syIHM6QlEhxF0lxGYrkUKR2kWJkKTEdt6mdNFacIHZaJEDToknRBLHjwEGL/uEWRZoASYAkBoq0RR0kdtKirR3FVmIjsUTZiW0tXIYz3IaUSHHI4b7Nfn/94y7vvpm33Ddvf/MOQJC8yznnnvN5v/s9v/M754oapmde+RFGR9fq4YcvLBJaA7YD2Im0E7QJ2WrQchk9yLpAKQRCYIAADJOCfwopyFz+BWag8KBA/gH8y8P7gnNkzmHCFBQhi5UZ3guYRXlHZQR5GbFzUUbmn4vqGatvnnpJUeViz+OfVKyumerZrHYI8ozV1W+HME+wWc8XFOVXIGoHBfdl2jaqqzGDmBDcAbsBGjE4hxgQGkA2KOPSqpHU2JVVM/bq7/15zRhT+VkUTs/8zI8wk04pPTG9TGa7ES8YPC/0GNhqpO6oWQNoshq0ZJjDHpwFMwGEcV7CFpgFMyjWh5oLM36NCTo7yjurXnNhDm9LBnP8Xpv1A1JumIN7C8Ic5hWHOXzuWTBn1YkI5qgvpBg+/r0muIdsRKYTSN8BewPpGDPupsmzr//ul6vKW1WAfuJnP0LH5CQmOoV2Aj8G+lFh/Qa9foNarEEzDRhZj6rCnN8yz4aZWQBmw5xtmbPrRXadKAXmKlnm6sIctWt2+9ltMx0V9nWkr2EMCCYnnfib3/mzirNXUaAf+ejTrOvpxfO8xXIcMPQp4JCMVShonlinNjrMhS1zPpjLtcytBHP4EosyvAy8JvElMw6b4/6yW+LP/mvlwK4Y0M++8hKGOsEOCn5R0keA3uxXZHPBrJItcxvmPDAHVY365TbYN0B/BHoDmPyr3/nTxgD66VdewuswpabcDuDfCPskaLkUEdU4MEdlNqJmbiGYw2rngDnThkJwHfQVid+bcm4w7Xn26m+XB3aqnJuf+cTLSOp2M/o5id8X9hHQonwwqwlgDvPK8mZkWeZcMNOGuVSY/UOLJD0FfNjhjUkMbd+/e+rUm8fmzeS8LPRzP/kynhMy22ji84JPgz2QeyROlrVrZJgLd0QhmaGmHgDmcc1VF+aYezWo6zjwP834gied7zCPr/526dq6ZAv97Csv4Zwn4EXgDyT9OFi6oWCOTpdumUuDmaaHuS6WOWuuwC/DjLTEkxLPpKQzM516r+/5fk4dPlo9oJ9+5WU8SMn0CuIPEbvnVrw+mjnsbFXCMofgFIXZFqDMmF1mGTDnertJG4AfdjN8YJ4Nbj/Qb6VIkMRAP/eJl3BmHUg/j/Rf/Jm+xoHZ2jDXCGarGswKspXZUqQXJXdTKXdk+4F+72RCS50I6Gc/8SGADqRfFnxB0oPZHTEX5loNAMuFmYIDwLZrriowKzfMwUOGB7uRXsRsTOL7ffv7vZNvFoe6KNBPv/IyM1JK0s8jviCptxjMtXbNVQTmEJyilnkhwhxq5upZ5lkwh/XqQjwvGAV7Z/uBPVYM6oJAP/vKS/Sm72p6pvOVQGY0jGWuhDdjoVlmNcAAsASYw6brAj2HdH6Z1zGw6WA/Q4ePlA70Uz99COfNMGkPvIj4wyA6rqEsc3vSpIm8GaVZ5tn92m3omQlnb3nY+Z0H9jF0+N2c3Lq8pM9MA24j8AXQhlawzGFepU+aqA1zzS1zdr8iHkH2BSc2mmbyYZvbQj/zyssA3YgvCH68VSxzOzaj6SzzbHfhI5IWI/etvhcenxp6Y670mAP006+8TNoMQ/9c4nMUmTRpFpjbUXPNDnPkYdllcBHPvbXjYD+zoc4C+umfOITcDCbtlPhdsNWtDXNbMzcqzGaKNWeWuzANbMfZN4WubnlpF6e+nZl4ydLQSk2DqRP4ZbC+ZtfMxb0ZuWCmDXO5MFdGM+eCOWyvPtAvI+tMT2eLjAjop3/yR5AMiYPCfirWkjlhzrR6Y8OcvyPaMqNqMFNxmTGnToJPgg6C+Pjnf24u0Ck3g9Bi4BdBD4YVzSUz6gazksE8O6+oCxN5M2jDrDJkRg1gDvJ5UOIXJRabWTbQ+z98KHzoAxKHCsFcN5kRAySJZi7dm2FtmInVtzEGgPlgDhviEKYDMrHvP76YAXp62RSe0WnSp4ClzQzz/FxzbT9zs8EclL1Usk+Jmc5H7mzIAC0JSbuAQ80Mc37LXEwzty1zE8Lsjz3hkOR2uuBY6pmf+mHSfjv9goyPNSvMWd6MLJjb3oyWhDn8I5YILojU648d3IUTMCMtB300lzejWWDO6ojEmrkN87xhroBrriyYo+cHiR91mlkuOZwwZLZb2O7ZMGdavVYwW/kwZ3VE2zVXNZiZP8xWUZgNmfXjM4wzCcQBg6WzO7X2ljnT+fMaAEaZFnPNtWEuS2aUAXOxSZOSYfbLXypxQIi0zBYb7PcbtHk08/xcc23LXDbMDSMzApj9WiBsP9jiNGiN4LG6zwBWRGa0YS4V5uy3YgGYazQDWDrMUW8+JliTxt/SdlX9ZMZcmON5FbXMWR1BG+ZqwFymzLBqyIwYzH6ZtkqwI42/P/OSZpAZhS1zLpiZ84pMCrMB5hlmnn+PE24hwlwBy1xNmDPOBJYIdqaRdmboawyYs8vMYZnndERlLbNnRiqVYtWDK1j14EqcE9dv3+TS1StMTE4iF3ZsG+ZiMFdTZigDM5IJY2catCkqowFhnp1XtsyovGX2zFizYhX/9OWP8nz/kzy0dDmSuHP/LkdPD/K/vvUqJ86d8p+hlWGugDejhjCHPbwptb5/8+ckrWhEmOcfmzF/y7xh9Vo+8+l/xUvPvEDvkh7SqRTpVIrFixazef1G9m7fyfsjH/DB6AjOheC2IMwN6c3IB7N/RjDuQMsxqz/MlunsesBswAOdXXzqH/0kj/ft9sv2vBg4/v/XPryGX/j4T7PqoZV48TybBWZrbpjJCbMflCRY7mT0xBu0bjCLWGNlN142zNWZAfTMY/vGR3mu/wkwL+uerOR5bN2wmRef3B+B3FQwq7lhVh6Ygzx6HLKuhoA59tCFF7RCbs08f5gt6NSndj5Ob3cPmZtzJDNcKsWzu/ay6IEHsjqlKWCmZWFGWKdj3p9Oqw7M9djRCKB3cQ/7+naHvwzyJgk8j42r17F+5RpfdjQ7zA0VaJRbMyeAGYm0axSYZ+cVPXpBmJnTEaXCbObLjUfXP8LmtRt8uZHPOsfSsp6l7Nm+kwwTzQSzmtibkQNmswhq1wgwm3wtSkmW2c+r/OB8w0k8saOf7sXdRUEOO1qpFE/u2MPirkWZlm0amGN1amDLTFKYY+3iGgHmOcH5UaaFYC5PZoSXGdDbHZMbFJAbmV4Bz2P7hs2sfzgjO5oK5ga3zIk0cwzmMHbfNQLMYUfM7oxaLGg189i8LiY3iIFUJC3r6WXPtseaE+YGt8ylwhwed40CM4llRmUsc1iQcKXJjYiJQHY8tofFgbejKWBuApkxX5gFfoB/Q8CcYayIZq5k1JzR272EJyK5UUIKZMe2QHZY/HkaGeYGlhmJvBkFYJbhrylsHJitiMyoJMzgmfHouo1siuRG6WlZTy+Pbwviu0L9nQNmtWEuz5thxWGWDNc4MMfynvMjq/yyqXAy5YnHdpcuN2JJLsUTO/ozsiOPZaYN8/xhJoS4MMyCTIhv/WGu8Y5GQG/3kph3Y54pJjs8a3SZoYaDuVTXXCGYkQX31QNmy9S4HsumPPN8ubFm/nIjTMt7lrJn62Ox7BsVZhoO5nI18+z7Xd1gjjqiHmsA/WNP9JUnN6LkfE/Joq5QdjQ/zBXfaqBUmBNq5vD+wIzg6guzqLZrLtcaQAjkxo4EsRtJUiA7Nqxa60feNTnMYVvV1TIn1MxxmAW4+sIc0lsryxxUY7bciAM2z5SRHQZNDnOju+bywSzAhQOFesGseNuo/ECjwjCbPyGieU6m5Etm4BxP9u1mUdei6C3QhnmegUbzhFlRXvWA2eKd6OdVfZj94753YxcVkRthRYPA/9Db0TAwmzUEzJX0ZuSE2UKg6wVz9KQhzNWUGRaV6Zmxed0jFZUbYVoWyY4GgllqCJirKTMy5RuubjCHJdYQZgPkHE/0JZQbcetdzJKbRXn73g5rDJijolsd5shC1wtmqP4A0OaU2bu4O7nckLh26wbnRy6CXOHrA9mxbcMmNjy8Otsd2Ya5JjArnFhpdcscZu4FoaKJ5EYw0Hv75DFe+/u/83dQSiBPQtlhxPhvw1wTmIWCaLuaw1z52IxiMIcrsxPLDYmZ6Sl+MHiU7594l5t3bxe/Z47sqB/MVgDmak+aFHXNWXVgFlG0Xa1hpqYwh6l3cQneDYkrN65xYvgUF0cvc+r9YXDJZMfW9ZtYv9IPKa2XZVYBy0zCfp0vzJUKNCoVZkFmCVZtYY5eTLWB2QjkRsLJlKCgE+dOceXGNcanJnhr6Bg2M5NMdizpjWRHvSwzeWBuetdcAZh9oOsCc4y3KsPsW0nDyfHEjoSxGzG5MTk9hRBHTp8oQXak2Ne3OwoprSXMmR+PLQjNPPsap0xL1gzmyDVaA5jD63u7l7Bve8JQUYkrN65zfPgUkr+N7oUrl5LLDvPYtn4T61euDrYLqwfMQSOr+pq5WoFGiWG20Chb4LYr8RdcLswBbTWD2aLJlPUUDRWNy43ro37AuGBsYtyXHV5Cb8eSXvqDSRYLmrGamnkuzOHzKNaczRVolBjmLD80rQ0zQRMlDhWVmJme5q3BI0xNTfmDq+D5jpw5wc07t4rnAf5Klu27o+3CamuZMzC3qjcj33nX0jAHf/V2L2FvCXJj9Ma1SG5kDjsuXBnh9IVzxWUHgIXeDl92VNObQR1gTjQArKFljvmhWxdmWXwyJYHcCPIK5YZcvK5ifGKct4aO+tvsJpAdy3uWsmfLjijfSltmqyPMdR0AFvVDVxvm0JrVGGaTf2xfCStTZqan+cHgkci7kRU1Jzhy+gQ3EsoO5Ni3fTeLo5UslYM542eOwWxgwb8XIswCfwlW1WGONV5NvzZlpXs3MnLDzQkBdRIXRkuTHdvWb4otoK0MzOSyzBZr23rBXAfNPMcPXV2ZUUeYAQ+PzWvnITduXEWzYJb8EIHQ25FUdizrWUp/JDvKgzk8mGsAGIdZC8Cbka+Orroyo34w+9Fujn1JYzfAn0wZOsrk1FQMlllRc4gjZxLKDjOQ870dXQ9gFYvNmCsz4jBTa28G9bfMIVeu5WRGUFsIYje2J4/dGL1xnePDJ/18c8Fs/iTLxVB2yBXNE/PYsm5jxttRhszICbOqD3NBb0YDyIz428Oh1oNZ8qPrHo3LjWLyIPJuXA1238kTzyx/kuXtk8eSyRh8b0f/lh1BO5QTaNRgMNMYMiNehpuXw7/BYfbLcyV6NwK5MT3l55sL5tiY4MjpwWSTLIHs2BfIjsDeliQzig0AqwFz3QON5gEzKLMEq2yY6zwAzNqfGejt7mZvCaGiozeuMzB8EhcM/vLBLAMnx8WrI5wqQXZsXbeRdSv9lSzlzgAWhFmVgblZNHP8vCO2BKv5B4BRBv5kytpH2LQ6gdzIChW9WhTmsEXvB7LDbIYkKfR2GPjBQvPVzBSBmSrD3GCaeY4fWuEDt4DMINS+rgS5IWXLjYwZzBucH9blyJlBbt5JGFIqx75tu6OVLBXXzLWAmRDixoTZr2sLwRze2ru4m70lejcGhk+i8IWVYNnUHG9HgpDSres2sm7Fan9z9BxtOG/NXAGYi7rmGtwyEzy/mzfMjaSZozEAZciNa0F+ydYASmJscoK3Tx3HvBJWsmzZkemdJJaZ2sDcbN6MXDBL8Y8GNbFmDm+18NU+T7nhx24UhzksU8DRM4OlrWTZtiu2S2kCy1yCZs5cV2GYm8Ayh1MHrlVkBkGj9C5ekpEbCYD25capkmEm8IZcGB3h9MXziWXHlnUbWbdiVSQ7Cg4AZz9fEZijFfwJYW5G11whmAM/dIvAbIpt81XCypTzp33vhlNJMIdSbSzydpSwkuXRwNuREOY5sRn5YM4CsTjMraCZ4zCDokmxGsPs3+eZx4zn4ZnhmYdnnh/vYBb97eEf9/ACl1d4zj/mn8c/K7Fv+y66FyVfmRIPFS0VZgX/PXo2+SSLXIp923dlPnxf5gCwKMwY5hnmef6Pzix4O3jBG8UL5Lyh8Fx4nMzf/r3hn+z7/Xs8vwzPC0CrPcwC0rW3zH7jdaTSbH1kM49v28mqB1fSkU7HYMvDYKGTgJz8L1IVcWyEDzZ64xoD54KVKaIkmDNSzfd2nLl4nqce2wuFBoiR7NjEuhWrOXPxPHJUDWYw0qkUj67dyO7Nfaxc9hBplyZsoHg14zVO/u8MlNMz01y/eY3T5we5cOk83sx09NarFcwC0rX1ZvgwL+3u4ZOHPsaPPv8hli5Z6p9I8LpOlDwvmXfDOU6c9ydTXImWefa4Y2xigrdPHePJHXtQgudYtqSXPY/u4MzF87H2qzzMvYuX8BMHP8qH9u2nt7uXiIKKpVhmgZW+e+8O333ndb55+FXuj931PTfUBmbfQhPlUlnLbLM6QgYGD3R08s9+7BX+yQ8dwskRua+SWNXE7ayi52emp/nB0DGmpqZIpVKZDioR5rBxj54Z4uadWyzvWZqgeo6923by9X/4OyamJqsiM7o6Ovnkyx/n0DMfyujKSrdzjrSku5eX93+Uro5Ovvo3X2FqajJyR1YbZlng5agKzJo7APTMeHLn4xx6LmjkMr8+Ne8kMXrzGieGTyLFxvTzgNm/RFy46suOot4OCCZZNrEuCCmdlzcjU+s5A0Az4/GtO/nQvv1BO1eZ4lnP5iSe2XuQHY/u9scNNYLZj4eutMyIRn3ZMAN0pNPs3/MUixYtmvODqWmSGDx3OjOZUgbMKJhkmRjn7VPHi8udIC1b0kv/5r6okwk7slxvhkFnOs3zu57iga46tHPwA+rqWsTuvn2kUyniWruaMIusjwbFYKY8mEOXVJZrTtDZ0cn6h9dkQV+PlDWZovJgjtoB+d6OJJMsAHLs3baLRV1dQfuVb5mFHwe+ctlD9D2yldmGqWYpKHPlQ6voTHdmwVhNmJFlPhpU9gxgDOao8CwPSoMkidGbwWRKpWCWcE5cvHqZ0xfPUTSkFAhjO9avDGI7KuRnBmPHI1t5aOmDtZUaeZvbfE9HDWAOQ0grppkzjoLckyaTU5NcuHLJv6gejR1UfGD4FFdu+qGilYDZvy2QHSePJx4bLFvSy+7NfdH4uWyYzehKd/D41l2kUulEdahaOwNXr48wPT0ZAFh9mEX4re8awAwwNTPNd45+n7GxsUhr1bSRJcbGx3jjyD9kVqZUckcj4NjwUOLYDuTYt3VXsICWsmAOgV657CG2bdhC1d0ZRdp5YmKMgaG3mZmZznbd+U1bFZgFuFrAHE5nO+f4wYmjvPbdvw125Uzwaq5UksMz45vfe523ho7hFH4VukIwB8934erlTGxHwfooFtuxOpgBnT/Modzoq7fcCNr5B+++zsmzQTtTG5gFpKsDs6IaxmMzJDE+Ncn/ePUvmJia5CPPvVj5iZU5ycAzbt29zV9/73X+/FtfY3xqMng1UTGYwzQ2Mc47p47zZF8/SZ5o6ZJedm/ezukPzkcj9HnBbEZnuoM9odwoFtIaGhQXv6aMPggmVu7du8333v02f3v4VaaDdq4VzLJoYqX6MPuvd/+a2/fu8sdf+zKvv/sPPL51J6seXEFHuiO7gRK0rbKuy33D9MwMV25c5ciZQU5fGGZqZqYqMPtNImTG0bOD3Lp7m2VLeotCIJdi77ZdfON732ZyanKeMDNXbhSdXHJcvTnK0PBgZsFBTKZo1t9RH+boIgHT09PcuDXK8PkhLl46h+fN1BxmyXygawVzeM5JzMzMcGL4FCeGT0duvdlNqAKtmX35rM6LLg0lj/9PJ1XNMod5OWW8HU/t2JsstmOtv4D27AfvZSRQCTCHkyl9j2xJLjcE3333O/yfb/5vXBZIZIMSL0s+9DnPETACpIJ2rjXMQPAVrBrC7K969qvsXIqUczg5Hzacr7XlcM7hCI4H56XwmIs0efa9setj96ZSfn5ZVqeClpkoFiQYeE6O887pgRJWsvTQH3g7ZDGoisAc7+jOjjR7tu725UYCoMfG7jN4dgDh79nnHEH7xf7golXwfr+Q97yTSDmRci5rEFhLmCXLfAWrVjAXime2AHT/vZsBCpizcWKjfNRy9v7MCp7h6Nkhbt67UxQsfwFtise37mRRZ1dJMIfB+WYeK5c9xNbEckNcvHKRi5cv4JwKghTVp4YhoPOF2fdDVwpmqyzMagKY8y2bksTFpLEdcdkReDtKgdm/zti+oTTvxtDwCT8aLuisVoBZgKsYzFp4MCsHzP4yKBifnOCd0yUsoO3uoX/z9mwtW0RmhBGMnekO+kuVG8PHAW+Oj7iZYRYEmzVWAuawui0OsxWDOWgE4U+y3EoqO1wgO2KxHUk6MvRuJJIbwXN8MBrIjVk+4maH2Qe6gjD7bqvWhTk8OAdmYM4awNDb8UGpssNfQJsU5ozcWF7cOgfPMXh2gPtj91oOZllgoSsFczxQrxSY1QQwF7TMZMMcblM6NjnhezsShpQuXdLD7s19QedYwY4MwcrIjY7EcmNoeAAsJjdaBGZk8fDR+sDcDN6M2a653DIjDjNRgx87O8SthCGlUoo9W3zZUQxmB4HcWFGi3LjAB3G50SIwR/HQ9Ya50S1z+IxJZMbsENDI25FEdkBGdjxU2NsRwgzGtke28mAJcmPo7Anuj93DtRDMxP3QbZiLy4xcrrm4zMi7bIrQ2+G/4pPJjl52hbIjT0eGgHWmO+jfstOXGwlSltxALQNzvHxXMZjVejAnHgAWCs6XODZ8sqSVLKHsyOvtwK/rimUPsSVJqGgQiHRp9CKXQrnRgjD7b6+yYbbMuVaHOe8AMH+dJHHxWmmyY/PajazN4+3AgvzxArmRYDLFf0CGAu9G1lZfLQSzD3TZMKulYA4Pzkczz65TuNfc+MQE75YoOx7b1DfXKvu1RzI6OzrYvXVXSXLj5HBYh9aEWRB8Y6UsmGkZmCtpmWeHgB5PKjsCebBn6y4/tiN03wVbdUlgZqxYtoIt67cmctX5ciP0big3DC0AM4RejjJhVgvAnP2MFbDMMZhTEh9cG+FsKDsKwicwj01rNrJmxWrCfS0QASy+d2PrhkBuFNPP/hNw8uyJzE5GrQiz+W3jAnLLgjnTGc0Jc1JvxnxgVlDM+OQ4R84Er/wEqTcmO6KODODtTIdyI9lC2Ehu4LUuzKEfuiIwx6x8M8JciW+a5Ic5A8vx4YSTLGZIjt1bdvFAZxfRNgC+3sjIjSTWWY6R0QtcuvI+KbmWhllEEytlwkzzwkw+y1xJmGWkJC6VKjvWbmRNzNsRNBZbN2xleeJQUeNkLFS0lWEOJlYWJszhwYp5MwrAHHbExMQER88MJP4UXO+SXnYEkywEg8LOdAe7QrmRJHZj/D4nzx4PrL5aGmZQEG23wGC2rHpVQzPn6KjguoHhIW7dTbqSxbErkh3MlRvFXIASI1cucOlKCbEbTQyzCCZWFhrMeV1zVbLMcX03cm2EcyWElG5csynydoCxpSS5AaeGTzA2djdZ7EbTwwxuXjAHy6ibDebwGesBs8zfAmNicpyjZ5KvZOnt7qFv0w4AOkqVG2P3ORWXGy0OM4CbF8zR7GLzwFzQNVcDmMPzAIPnhrhdwkqWnVt20tXRyUPLHuTR9clDRX3vRig3Whxm8+voFgrMtR4A5utIJzFydYRzl0qTHatWPMyj67ckkxvBc58ePsFYsdiNVoFZfh1dOTCrmWGu5gCwwHkHTExOcOz08cQrWXq6e9i9tZ9dW0pbmeLLjQKxG60Es08C6XJgpsFh9o/VX2bM9nZgxtC5IW7fvc3SJNuFSTy/9wUWP7CYpB9EGhm9wMiVArEbLQgzUuzTyC0Gc6No5rzejqsjnL90LqHsMNasXMvSnmUlyI0Bxsbu+kAuAJhDt6hrRZj9Y42hmeee90GZmBrn+JmEsmPWZFCxNDZ2j9PDAxheAGXrwxz2j5s3zGpMmAtaZuoNc1QUAobODXEn6UqWJCkIPb08epGRK+8H3o2FA7P/9psvzDQmzHkHgDE4qRvMmY50EpeTyo6kyW+QQG4EC2EXEMyy2BKshQKzZFT6Q/Dz6UgnMTk5wcCZ5CtZkqTxQG5k7buxQGAODIWivm1WmMODSWCut2Weff7kuUFuV0R2+HJjZPQily+/n7XN10KBObq+mWEuxTI3GsxO4sq1Ed4LZUdZyX/oM8MDjI3fjeTGQoIZWRht15ww+8eiAjIw0/gwh7PXE5PjnDib/FNwhdL42D3ODGdiNxYazEKZr2AlhVkNBHNjezOSd+SpSsiOyLvhx24sRJj9e0uEmQaBuVm8GcXcZk7iytXLvF+27PDlxni4MmUBwiyibQyaB2Yjj2WGhvRmFII5PD85Oc7g2WCSZZ5pfPw+Z4YHArlBzjq0OswiDB9tEpjDg8oFczPJDGVqG3qZTpczySLH5SsXuHwl5t1YgDAHkqMUmFV3zZxTZjQrzGEnSIxevcSFeU+yGGcLxG4sCJjNv8+VBjN1lRnN6JorBrNCb8fUOENnk69kiafxsfu+dwNbuDAr9EMngdnqB7N/LI/MqDvMVgGYMx19+twgd++VIjv8Z7s8eoErV94PQkUXLswQ+2hQQZhVX8vcuK45knVkMZgDb8fVayO8n2QlS+anDgbD5/zJlKzyFyDMUjCxUhRm6gNzEtdc88oMm9PJk5PjnDqbfCULwPjEPc4Gkyku/pwLEGYhXBvmxoA59HacOTfI3bu3ipMchIpeuXIxy7uxkGEW4GTMNBLM4cHG1MxVgjn448uOS1wcSSA7glDRs+cGGI8vhF3AMMts2iEmGgXmgpaZ1oY59HZMTo0zePpIYW9HAPrY/bucPXM0asMFBbNy1mHSCe5YUZhVdZj9Y1EBDWaZK+jNKAKaBCeG3uKD0ErnglkCOU6eeodLI+d87byQYA7zmF0HdMcBN1QUZqoO80LxZhQGzZcdN29d5Rvf+guuX78cQB2z1M5hEufODfDtN/4vU5MT0Q9hwcCc6xr/+I3U1md3fQK0qd4wFxsAImuK2Iz5wxzm7+/dcf3GFS5+cJauzi4WLVqMS6WYmZ7m1q2rvHvkdb71rT/n+o3LvnVe6DBn6ngsbehceHWtYV6Q3owkHRlIiPfeP8XIyHkeenAlPUuWYd4Mt25d4/bta3jeDI42zNl15FwabIAQlxpb5oXqzSjakUFuzsHMzGQm8Aii2cA2zHPqaKCBtMQAcBepZw7MFhbYtsw1hXnWIDFrfWDw/K0FMwXqH+RRrI7GXbABhxhEupwTZj90qw1z3WDOvqY1YVZ2GQm8GXNhFojLEoNOxiUZJ3LCHD7Eggg0asPchDLDP+//fULokjO5+0hvVhtmI5lrjjbMbZhLqGOIjMzeFHbfBf87jOxWFpAVhjnpAHBhuObIe83CgDn/85cKc+ClvyU4jBEE+BvHzDgWUx3Vh3mWZV6QMsMK16E1YS6imUuHGdBRoWNCODNwKXdD6K8qDXN4sK2Z81hm8tehdWGuqGX264B9XaYbJsN9/Xe/gnmGxKuCkTjMRrDVbtsyVxbmBWuZqwCzbETiL3EeL332q0HdDMzsOPBaHOZo37uWCjSqM8xhOW2YKwEzgtdw3gDOi84zveg8kptEfMlktyxWydZbNlX/AWAb5orBfAvxJcxNzoxezQD91//pu3gyzDgMvBZZV0qHuZ7fAWzDvKBgRuI1ocMgXv7Pf58BGiCVmgHpPtIXgeuQAaoUzUwb5tz1K1KHNsylwmzXMfsiePfTMxaSmgH6L3/rL4JK6nXQV9rejApaZorVoQ1ziTCD8WVJrwtx4HNfnQs0gFJCMAn8vsFQOGs3701gaMNcvA4hzBY0abPDTP76Vw7mIcHvm9lkKkVWyvrvqcNH2ba/H8kblZjA9GFEuh1oNE+rSbE6xGHO/WNoLpiVXUYVYBYaF/p3nnPfcObxwq99LT/QAKe+c4ztz+8BNGSwRtKTuWD2jzUqzBYWVT/LrIUIc3Uts3x4/ljitxxMHfxsNsw5gQ6h7jvQP4U4Ajwt6ZHmssx1hHnBWuYqw+y70A5L/Apw9YXPZHRzPOXdYbsDh4nzkj4PvFcUZhoF5mYZAOaA2ZoR5gI/xkrB7PPznuDzhnc+ndsOA+Q/M/jmUfoOPE5XV89709OTHyBeFHQ3tmVuYs0c1l8ULqOhYK6JZkbGqNCvPtDjXvUmYf9n/l/pQAOcfPMom5/pwzwGXUo3kV6UWZfPaBvmSlrmuLVrHpirb5ll3AZ+wzn7k+kp8w58Zq5uTgw0wKk3j7Lj4B4zOCKzMaTnhbraMFfYMsdAa8Mch9n+g4wvgqaLwZwIaICTh4/Sd2CPh/R9YFTwHKK7/jA3uTcjD8yupDZoQZhNCBsV+g1n+iJo6sCv5x4EzgvoCOr9ezw8e0fOnUc8K7S0fjBHRdUP5pImTdqWObk3g/cl/UpaM39iYvrAZ4tb5pKBBl9T9/3QHnNmAya9BWxHbFioy6aqBXNUf5UGStPDjEB6U6ZfSj2QftXzVFQzlwU0+JZ6xw/14yl13sm+KdSN2AVKLwiYq6yZc4G4IGA2xkH/TeLfmtm7ZsYLv5ZMZsSTSr4jlj72uU8BdBv8DOgziO0tDXOiOlQOZhYIzBgnhX5L2J8a3DtYgsSYnUq20PE09MYRth/YO2UTXW8rPfM3EimkRwWL2jC3Asxkl1F5mK8L/XfBr2p67K/NpScPfvYvy0GyPAsdTx/7jZ8F6AT3AuhfCj6C6A1f0W2Yy4e5UBs1mWW+LfENzP5I0hvA5MHPlC4vqgo0wMf/9S9hS2+BucXCDkj2KcEhwSpAbZjLgznf+SaB2SS7LHgN8SWhw+Z595ctX8bj/+JLFWOwokCH6Wf//c9xZ8Jwsk5JOwX/WLKPyuiX6A2c5oksdxvmJoQ5WIcqf7PP26Cjwv4qWJ09YDApEy+W6MGoG9Dx9Inf/LTfvh5LZdYvcUDwvNBOYauBbslX3NmNVGTSJOygasKMZfKsNMzx+uetQwmaetZz1nLnfDL9YDLuIUaEBmT2HcFhoaPTxi0J++Ffzx+HUYlUdaDj6ZO/+WlurO3Q8ouTi4TWCNsh2Clsp9AmwWrBcqBHsk5BOrH/kgrDXI5ljho3uw7xj0uUBFMxqUYOmAksZFBHNL8fdE6YzaYFk6A7kt0QjEicAwZkNiAxKHTJvTU15u3tsJc/V12I4+n/A1DD1UgGEipUAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="icone-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Evolução">
 <meta name="theme-color" content="#34503E">
-<style>
-  :root{
-    --bg: #FAF6EF;
-    --bg-soft: #F1EAE0;
-    --ink: #24312A;
-    --ink-soft: #5B6A5F;
-    --line: #E4DBC9;
-    --card: #FFFFFF;
-    --sage: #4F7A5E;
-    --sage-dark: #34503E;
-    --sage-light: #DDE9DF;
-    --dawn: #D98E4A;
-    --dawn-light: #F6E3CC;
-    --night: #33465A;
-    --night-light: #DCE2E9;
-    --danger: #B5533C;
-    --radius: 14px;
-    --radius-sm: 9px;
-    --shadow: 0 1px 2px rgba(36,49,42,0.04), 0 6px 20px -8px rgba(36,49,42,0.12);
-  }
-
-  *{ box-sizing: border-box; }
-
-  body{
-    margin:0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    padding-bottom: 60px;
-  }
-
-  h1,h2,h3{ font-family:'Fraunces', serif; letter-spacing:-0.01em; margin:0; }
-
-  /* ---------- HEADER ---------- */
-  .topo{
-    padding: 26px 20px 34px;
-    position: relative;
-    overflow: hidden;
-    color: #fff;
-  }
-  .topo::before{
-    content:"";
-    position:absolute; inset:0;
-    background: linear-gradient(160deg, var(--sage-dark), var(--sage) 60%, var(--dawn) 130%);
-    z-index:0;
-  }
-  .topo-conteudo{ position:relative; z-index:1; }
-  .topo .eyebrow{
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    opacity: 0.85;
-    font-weight: 600;
-  }
-  .topo h1{ font-size: 25px; font-weight:600; margin-top:4px; color:#fff; }
-  .topo p.data-legivel{
-    font-size: 13.5px;
-    opacity: 0.9;
-    margin-top: 4px;
-    font-family:'Inter',sans-serif;
-  }
-
-  /* Arco do dia — seletor de turno, elemento de assinatura */
-  .arco-wrap{
-    margin-top: 22px;
-    background: rgba(255,255,255,0.14);
-    border: 1px solid rgba(255,255,255,0.22);
-    border-radius: var(--radius);
-    padding: 14px 14px 10px;
-    backdrop-filter: blur(6px);
-  }
-  .arco-svg{ width:100%; height:auto; display:block; }
-  .turnos{
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap:8px;
-    margin-top: 10px;
-  }
-  .turno-btn{
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 10px;
-    padding: 9px 6px;
-    color: #fff;
-    font-family:'Inter',sans-serif;
-    font-size: 12.5px;
-    font-weight: 600;
-    text-align:center;
-    cursor:pointer;
-    transition: all .15s ease;
-    opacity: 0.75;
-  }
-  .turno-btn .hora{
-    display:block;
-    font-weight: 400;
-    font-size: 10.5px;
-    opacity: 0.85;
-    margin-top: 1px;
-  }
-  .turno-btn.ativo{
-    background: rgba(255,255,255,0.95);
-    color: var(--sage-dark);
-    opacity: 1;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-  }
-
-  /* ---------- LAYOUT ---------- */
-  .container{ padding: 16px 16px 0; max-width: 560px; margin: 0 auto; }
-
-  .tabs-tela{
-    display:flex;
-    gap:8px;
-    max-width: 560px;
-    margin: 14px auto 0;
-    padding: 0 16px;
-  }
-  .tab-tela{
-    flex:1;
-    text-align:center;
-    padding: 11px 6px;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--ink-soft);
-    background: var(--card);
-    border: 1.5px solid var(--line);
-    border-radius: 10px;
-    cursor:pointer;
-  }
-  .tab-tela.ativo{
-    background: var(--sage-dark);
-    border-color: var(--sage-dark);
-    color: #fff;
-  }
-
-  .tabela-glicemia{
-    width:100%;
-    border-collapse: collapse;
-    font-size: 12.5px;
-    text-align:center;
-  }
-  .tabela-glicemia th, .tabela-glicemia td{
-    border: 1px solid var(--line);
-    padding: 8px 4px;
-  }
-  .tabela-glicemia th{
-    background: var(--sage-light);
-    color: var(--sage-dark);
-    font-weight:700;
-  }
-  .tabela-glicemia td small{ color: var(--ink-soft); font-size:10px; }
-  .tabela-glicemia td:first-child{ font-weight:700; }
-
-  .card{
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 18px 18px 20px;
-    box-shadow: var(--shadow);
-    margin-bottom: 14px;
-  }
-  .card h2{
-    font-size: 16.5px;
-    font-weight: 600;
-    color: var(--sage-dark);
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom: 4px;
-  }
-  .card .sub{
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    margin-bottom: 14px;
-  }
-  .status-conexao{
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: none;
-    letter-spacing: 0;
-    padding: 3px 9px;
-    border-radius: 20px;
-    background: var(--bg-soft);
-    color: var(--ink-soft);
-  }
-  .status-conexao.online{ background: var(--sage-light); color: var(--sage-dark); }
-  .status-conexao.offline{ background: #F6E0D8; color: var(--danger); }
-  .card-icon{
-    width: 26px; height:26px;
-    border-radius: 7px;
-    background: var(--sage-light);
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0;
-  }
-  .card-icon svg{ width:15px; height:15px; stroke: var(--sage-dark); }
-
-  label.campo-label{
-    font-size: 12.5px;
-    font-weight: 600;
-    color: var(--ink-soft);
-    display:block;
-    margin: 14px 0 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  label.campo-label:first-of-type{ margin-top:0; }
-
-  select, input[type="date"], input[type="number"], textarea{
-    width:100%;
-    padding: 12px 13px;
-    border: 1.5px solid var(--line);
-    border-radius: var(--radius-sm);
-    font-family:'Inter',sans-serif;
-    font-size: 14.5px;
-    color: var(--ink);
-    background: #fff;
-    appearance: none;
-  }
-  select{
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235B6A5F' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    padding-right: 34px;
-  }
-  textarea{ resize: vertical; min-height: 60px; line-height:1.5; font-family:'Inter',sans-serif; }
-  select:focus, input:focus, textarea:focus{
-    outline:none; border-color: var(--sage);
-    box-shadow: 0 0 0 3px var(--sage-light);
-  }
-
-  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-
-  /* toggles de estado clínico */
-  .toggle-row{
-    display:flex; align-items:center; justify-content:space-between;
-    padding: 11px 4px;
-    border-bottom: 1px solid var(--bg-soft);
-    cursor:pointer;
-  }
-  .toggle-row:last-child{ border-bottom:none; }
-  .toggle-row span{ font-size: 14.5px; font-weight:500; }
-  .switch{
-    width: 42px; height: 24px;
-    background: var(--line);
-    border-radius: 20px;
-    position: relative;
-    flex-shrink:0;
-    transition: background .18s ease;
-  }
-  .switch::after{
-    content:""; position:absolute; top:2px; left:2px;
-    width:20px; height:20px; border-radius:50%;
-    background:#fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25);
-    transition: transform .18s ease;
-  }
-  .toggle-row.on .switch{ background: var(--sage); }
-  .toggle-row.on .switch::after{ transform: translateX(18px); }
-
-  /* vitais glicêmicos */
-  .vital-box{
-    background: var(--bg);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
-  }
-  .vital-box input{
-    border:none; background:transparent; padding:2px 0;
-    font-family:'JetBrains Mono', monospace;
-    font-size: 24px; font-weight:700; color: var(--sage-dark);
-  }
-  .vital-box input:focus{ box-shadow:none; }
-  .vital-unidade{ font-size:11.5px; color:var(--ink-soft); font-weight:600; }
-
-  /* medicações — chips */
-  .chip{
-    display:flex; align-items:center; gap:10px;
-    padding: 11px 12px;
-    border: 1.5px solid var(--line);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    cursor:pointer;
-    transition: all .15s ease;
-    background:#fff;
-  }
-  .chip.on{
-    border-color: var(--sage);
-    background: var(--sage-light);
-  }
-  .chip .dot{
-    width:18px; height:18px; border-radius:6px;
-    border: 1.5px solid var(--line);
-    flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .chip.on .dot{ background: var(--sage); border-color: var(--sage); }
-  .chip .dot svg{ width:11px; height:11px; stroke:#fff; display:none; }
-  .chip.on .dot svg{ display:block; }
-  .chip span.nome{ font-size: 14px; font-weight:500; }
-  .chip .x{
-    margin-left: auto;
-    font-size: 11px;
-    color: var(--ink-soft);
-    padding: 3px 5px;
-    border-radius: 5px;
-  }
-  .chip .x:hover{ color: var(--danger); background: rgba(181,83,60,0.1); }
-
-  .chip-grid{
-    display:flex; flex-wrap:wrap; gap: 8px;
-    margin-bottom: 4px;
-  }
-  .chip-grid .chip{ width:auto; margin-bottom:0; }
-
-  /* linha de adicionar item (medicação / horário) */
-  .add-row{
-    display:flex; gap:8px;
-    margin-top: 12px;
-  }
-  .add-row input{ flex:1; }
-  .add-btn{
-    width: 46px; height: 46px;
-    flex-shrink:0;
-    background: var(--sage);
-    color:#fff;
-    border:none;
-    border-radius: var(--radius-sm);
-    font-size: 20px;
-    line-height:1;
-    cursor:pointer;
-  }
-  .add-btn:active{ background: var(--sage-dark); }
-
-  .horarios-lista{
-    display:flex; flex-wrap:wrap; gap:8px;
-    margin-top: 12px;
-  }
-  .horario-chip{
-    display:flex; align-items:center; gap:8px;
-    background: var(--sage-light);
-    border: 1px solid var(--sage);
-    color: var(--sage-dark);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 7px 8px 7px 12px;
-    border-radius: 20px;
-  }
-  .horario-chip .x{
-    cursor:pointer;
-    font-size: 11px;
-    padding: 3px 6px;
-    border-radius: 50%;
-    color: var(--sage-dark);
-  }
-  .horario-chip .x:hover{ background: rgba(181,83,60,0.15); color: var(--danger); }
-  .vazio-aviso{ font-size: 12.5px; color: var(--ink-soft); font-style: italic; }
-
-  /* ---------- HISTÓRICO ---------- */
-  .hist-mes{
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--ink-soft);
-    margin: 18px 0 6px;
-    padding-bottom: 5px;
-    border-bottom: 1.5px solid var(--line);
-  }
-  .hist-mes:first-child{ margin-top: 2px; }
-  .hist-dia{
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--sage-dark);
-    margin: 12px 0 2px;
-  }
-  .hist-item{
-    display:flex; align-items:center; justify-content:space-between;
-    gap: 10px;
-    padding: 11px 4px;
-    border-bottom: 1px solid var(--bg-soft);
-  }
-  .hist-item:last-child{ border-bottom:none; }
-  .hist-titulo{ font-size: 14px; font-weight:600; color: var(--ink); }
-  .hist-sub{ font-size: 12.5px; color: var(--ink-soft); margin-top:1px; }
-  .hist-acoes{ display:flex; align-items:center; gap:6px; flex-shrink:0; }
-  .hist-btn{
-    background: var(--sage-light);
-    color: var(--sage-dark);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    font-weight: 600;
-    cursor:pointer;
-    font-family:'Inter',sans-serif;
-  }
-  .hist-excluir{
-    background: transparent;
-    color: var(--ink-soft);
-    padding: 8px 9px;
-  }
-  .hist-excluir:hover{ color: var(--danger); }
-
-  /* botão principal */
-  .btn-gerar{
-    width:100%;
-    background: var(--sage-dark);
-    color:#fff;
-    border:none;
-    padding: 16px;
-    font-family:'Inter',sans-serif;
-    font-size: 15.5px;
-    font-weight: 700;
-    border-radius: var(--radius);
-    cursor:pointer;
-    margin: 6px 0 20px;
-    box-shadow: 0 8px 20px -6px rgba(52,80,62,0.45);
-    transition: transform .12s ease;
-  }
-  .btn-gerar:active{ transform: scale(0.98); }
-
-  /* ---------- PRÉVIA WHATSAPP ---------- */
-  #resultado{ display:none; }
-  .wa-header{
-    display:flex; align-items:center; gap:8px;
-    margin-bottom: 10px;
-    padding: 0 2px;
-  }
-  .wa-header .card-icon{ background: var(--sage-light); }
-  .wa-header h2{ margin:0; font-size:15px; color:var(--ink); }
-
-  .wa-frame{
-    background: #DDE9DA;
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(255,255,255,0.35) 0, transparent 40%),
-      radial-gradient(circle at 80% 70%, rgba(255,255,255,0.25) 0, transparent 40%);
-    border-radius: var(--radius);
-    padding: 16px;
-    border: 1px solid var(--line);
-  }
-  .wa-bubble{
-    background: #fff;
-    border-radius: 10px 10px 10px 2px;
-    padding: 12px 14px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.8px;
-    line-height: 1.65;
-    color: #1F2B24;
-    white-space: pre-wrap;
-    max-height: 340px;
-    overflow-y: auto;
-  }
-  .wa-bubble::before{
-    content: "";
-  }
-
-  .btn-copiar{
-    width:100%;
-    background: #25D366;
-    color:#fff;
-    border:none;
-    padding: 15px;
-    font-family:'Inter',sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    border-radius: var(--radius);
-    cursor:pointer;
-    margin-top: 14px;
-    display:flex; align-items:center; justify-content:center; gap:8px;
-  }
-  /* ---------- CARTÃO-RESUMO (imagem) ---------- */
-  #resultado{ display:none; }
-
-  .resumo-card{
-    background: #FFFDF8;
-    border: 1.5px solid var(--sage-dark);
-    border-radius: 14px;
-    padding: 22px 22px 18px;
-  }
-  .resumo-card .rc-header{
-    display:flex; align-items:center; gap:12px;
-    margin-bottom: 14px;
-  }
-  .resumo-card .rc-icones{ display:flex; gap:6px; flex-shrink:0; }
-  .resumo-card .rc-icone{
-    width: 34px; height:34px;
-    border-radius: 9px;
-    background: var(--sage-light);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .resumo-card .rc-icone svg{ width:18px; height:18px; stroke: var(--sage-dark); }
-  .resumo-card .rc-titulo h3{ font-size: 16.5px; font-weight:700; color: var(--ink); line-height:1.25; }
-  .resumo-card .rc-titulo .rc-sub{ font-size: 12px; color: var(--ink-soft); font-weight:500; margin-top:2px; font-family:'Inter',sans-serif; }
-
-  .resumo-card hr{ border:none; border-top: 1.5px solid var(--ink); opacity: 0.85; margin: 12px 0; }
-
-  .rc-secao-titulo{
-    font-size: 12.5px;
-    font-weight:700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--sage-dark);
-    margin-bottom: 8px;
-  }
-
-  .rc-linha{
-    display:flex; align-items:flex-start; justify-content:space-between;
-    gap: 12px;
-    padding: 7px 0;
-    font-size: 13.5px;
-  }
-  .rc-linha .rc-label{ display:flex; align-items:center; gap:8px; color: var(--ink); font-weight:500; }
-  .rc-linha .rc-label .emoji{ font-size:15px; }
-  .rc-linha .rc-valor{ font-weight:700; color: var(--ink); text-align:right; }
-
-  .rc-bloco-texto{
-    font-size: 13.5px;
-    color: var(--ink);
-    line-height: 1.65;
-    white-space: pre-wrap;
-    background: var(--bg);
-    border-radius: 8px;
-    padding: 10px 12px;
-    margin-bottom: 4px;
-  }
-
-  .rc-destaque{
-    display:flex; align-items:flex-start; justify-content:space-between;
-    gap: 10px;
-    background: var(--dawn-light);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin: 14px 0 4px;
-  }
-  .rc-destaque .rc-label{ display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color: var(--ink); flex-shrink:0; }
-  .rc-destaque .rc-valor{ font-weight:600; font-size:13.5px; color: var(--ink); text-align:right; white-space:pre-wrap; }
-
-  .rc-lista-bullet{ margin:0; padding-left: 18px; font-size: 13px; color: var(--ink); }
-  .rc-lista-bullet li{ margin-bottom: 4px; }
-  .rc-lista-bullet b{ font-weight:700; }
-
-  .rc-texto-completo{
-    font-family:'Inter', sans-serif;
-    font-size: 14.5px;
-    line-height: 1.75;
-    color: var(--ink);
-    white-space: pre-wrap;
-  }
-
-  .btn-imagem{
-    width:100%;
-    background: #25D366;
-    color:#fff;
-    border:none;
-    padding: 16px;
-    font-family:'Inter',sans-serif;
-    font-size: 15.5px;
-    font-weight: 700;
-    border-radius: var(--radius);
-    cursor:pointer;
-    margin-top: 16px;
-    display:flex; align-items:center; justify-content:center; gap:9px;
-  }
-  .btn-imagem svg{ width:19px; height:19px; }
-
-  .btn-baixar{
-    width:100%;
-    background: transparent;
-    color: var(--sage-dark);
-    border: none;
-    padding: 10px;
-    font-family:'Inter',sans-serif;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-decoration: underline;
-    cursor:pointer;
-    margin-top: 6px;
-  }
-</style>
 </head>
 <body>
 
@@ -607,131 +27,120 @@
       <p class="data-legivel" id="dataLegivel">—</p>
 
       <div class="arco-wrap">
-        <svg class="arco-svg" viewBox="0 0 300 60" id="arcoSvg">
+        <svg class="arco-svg" viewBox="0 0 300 60" id="arcoSvg" aria-hidden="true">
           <path d="M10 55 A140 140 0 0 1 290 55" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round"/>
           <circle id="arcoSol" cx="150" cy="8" r="6" fill="#fff"/>
         </svg>
-        <div class="turnos">
-          <div class="turno-btn" data-turno="Manhã" data-hora="06–12h" onclick="selecionarTurno('Manhã', 0)">Manhã<span class="hora">06–12h</span></div>
-          <div class="turno-btn" data-turno="Tarde" data-hora="12–18h" onclick="selecionarTurno('Tarde', 1)">Tarde<span class="hora">12–18h</span></div>
-          <div class="turno-btn ativo" data-turno="Noite" data-hora="18–06h" onclick="selecionarTurno('Noite', 2)">Noite<span class="hora">18–06h</span></div>
+        <div class="turnos" role="group" aria-label="Turno do plantão">
+          <div class="turno-btn" role="button" tabindex="0" aria-pressed="false" data-turno="Manhã" onclick="selecionarTurno('Manhã', 0)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selecionarTurno('Manhã',0);}">Manhã<span class="hora">06–12h</span></div>
+          <div class="turno-btn" role="button" tabindex="0" aria-pressed="false" data-turno="Tarde" onclick="selecionarTurno('Tarde', 1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selecionarTurno('Tarde',1);}">Tarde<span class="hora">12–18h</span></div>
+          <div class="turno-btn ativo" role="button" tabindex="0" aria-pressed="true" data-turno="Noite" onclick="selecionarTurno('Noite', 2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selecionarTurno('Noite',2);}">Noite<span class="hora">18–06h</span></div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="tabs-tela">
-    <div class="tab-tela" id="tabHistorico" onclick="mudarTela('historico')">🕒 Histórico</div>
-    <div class="tab-tela ativo" id="tabEvolucao" onclick="mudarTela('evolucao')">📋 Evolução</div>
-    <div class="tab-tela" id="tabGlicemia" onclick="mudarTela('glicemia')">🩸 Glicemia</div>
+  <div class="tabs-tela" role="tablist">
+    <div class="tab-tela" id="tabHistorico" role="tab" tabindex="0" aria-selected="false" onclick="mudarTela('historico')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mudarTela('historico');}">🕒 Histórico</div>
+    <div class="tab-tela ativo" id="tabEvolucao" role="tab" tabindex="0" aria-selected="true" onclick="mudarTela('evolucao')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mudarTela('evolucao');}">📋 Evolução</div>
+    <div class="tab-tela" id="tabGlicemia" role="tab" tabindex="0" aria-selected="false" onclick="mudarTela('glicemia')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mudarTela('glicemia');}">🩸 Glicemia</div>
   </div>
 
   <div class="container">
 
+  <!-- ==================== HISTÓRICO ==================== -->
   <div id="telaHistorico" style="display:none">
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>Histórico de evoluções<span id="statusConexao" class="status-conexao">conectando...</span></h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>Histórico de evoluções<span id="statusConexao" class="status-conexao">conectando...</span></h2>
       <div class="sub">Compartilhado entre as três cuidadoras</div>
       <div class="grid-2" style="margin-bottom:12px">
         <div>
-          <label class="campo-label" style="margin-top:0">Mês</label>
+          <label class="campo-label" style="margin-top:0" for="filtroMes">Mês</label>
           <select id="filtroMes" onchange="renderizarListaHistoricoFiltrado()">
             <option value="">Todos os meses</option>
           </select>
         </div>
         <div>
-          <label class="campo-label" style="margin-top:0">Cuidadora</label>
-          <select id="filtroCuidadora" onchange="renderizarListaHistoricoFiltrado()">
-            <option value="">Todas</option>
-            <option value="Edna">Edna</option>
-            <option value="Camila">Camila</option>
-            <option value="Kauane">Kauane</option>
-          </select>
+          <label class="campo-label" style="margin-top:0" for="filtroCuidadora">Cuidadora</label>
+          <select id="filtroCuidadora" onchange="renderizarListaHistoricoFiltrado()"></select>
         </div>
       </div>
-      <div id="listaHistorico"></div>
+      <div id="listaHistorico"><span class="vazio-aviso">Conectando ao histórico compartilhado...</span></div>
+      <button type="button" class="btn-secundario" id="btnMaisHistorico" hidden onclick="carregarMaisHistorico()">Carregar registros mais antigos</button>
+    </div>
+
+    <div class="card" id="cardResumoDia" hidden>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 3v18M3 12h18"/></svg></span>Resumo das 24 horas</h2>
+      <div class="sub">Os três turnos e o controle glicêmico do dia em uma única mensagem</div>
+      <div class="texto-resumo" id="textoResumoDia"></div>
+      <button type="button" class="btn-imagem" onclick="enviarResumoDoDia()">Enviar resumo no WhatsApp</button>
+      <button type="button" class="btn-baixar" onclick="copiarResumoDoDia()">Copiar texto</button>
     </div>
 
   </div>
 
+  <!-- ==================== EVOLUÇÃO ==================== -->
   <div id="telaEvolucao">
 
-    <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Identificação</h2>
-      <div class="grid-2">
-        <div>
-          <label class="campo-label">Data</label>
-          <input type="date" id="dataAtual">
-        </div>
-        <div>
-          <label class="campo-label">Cuidadora</label>
-          <select id="cuidadora">
-            <option value="Edna">Edna</option>
-            <option value="Camila">Camila</option>
-            <option value="Kauane">Kauane</option>
-          </select>
-        </div>
+    <div class="banner-pendente" id="bannerRascunho" hidden></div>
+    <div class="banner-pendente" id="bannerPendente" hidden></div>
+    <div class="aviso aviso-info" id="avisoEdicao" hidden>
+      <span class="ico">✏️</span>
+      <div>Você está <b>editando</b> uma evolução já registrada. Ao concluir, ela será substituída.
+        <button type="button" class="btn-baixar" style="margin:4px 0 0;padding:0" onclick="cancelarEdicao()">Cancelar edição</button>
       </div>
-
-      <label class="campo-label">Repassar plantão para</label>
-      <select id="repasse"></select>
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4.318 6.318a4.5 4.5 0 0 0 0 6.364L12 20.364l7.682-7.682a4.5 4.5 0 0 0-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 0 0-6.364 0Z"/></svg></span>Estado clínico</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Identificação</h2>
+      <div class="grid-2">
+        <div>
+          <label class="campo-label" for="dataAtual">Data</label>
+          <input type="date" id="dataAtual">
+        </div>
+        <div>
+          <label class="campo-label" for="cuidadora">Cuidadora</label>
+          <select id="cuidadora"></select>
+        </div>
+      </div>
+
+      <label class="campo-label" for="repasse">Repassar plantão para</label>
+      <select id="repasse"></select>
+
+      <button type="button" class="btn-secundario" onclick="repetirPlantaoAnterior()">↻ Repetir dados do plantão anterior</button>
+    </div>
+
+    <div class="card">
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4.318 6.318a4.5 4.5 0 0 0 0 6.364L12 20.364l7.682-7.682a4.5 4.5 0 0 0-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 0 0-6.364 0Z"/></svg></span>Estado clínico</h2>
       <div class="sub">Toque para marcar todos os estados observados no plantão</div>
       <div class="chip-grid" id="listaEstados">
-        <div class="chip on" onclick="alternarChip(this)" data-valor="consciente">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Consciente</span>
-        </div>
-        <div class="chip on" onclick="alternarChip(this)" data-valor="calma, em repouso">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Calma e em repouso</span>
-        </div>
-        <div class="chip" onclick="alternarChip(this)" data-valor="desorientado(a)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Desorientado(a)</span>
-        </div>
-        <div class="chip" onclick="alternarChip(this)" data-valor="agitado(a)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Agitado(a)</span>
-        </div>
-        <div class="chip" onclick="alternarChip(this)" data-valor="sonolento(a)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Sonolento(a)</span>
-        </div>
-        <div class="chip" onclick="alternarChip(this)" data-valor="com queixa de dor">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Com queixa de dor</span>
-        </div>
-        <div class="chip" onclick="alternarChip(this)" data-valor="febril">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Febril</span>
-        </div>
-        <div class="chip" onclick="alternarChip(this)" data-valor="choroso(a)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Choroso(a)</span>
-        </div>
+        <div class="chip chip-fixa on" role="button" tabindex="0" aria-pressed="true" data-valor="consciente"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Consciente</span></div>
+        <div class="chip chip-fixa on" role="button" tabindex="0" aria-pressed="true" data-valor="calma, em repouso"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Calma e em repouso</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="desorientado(a)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Desorientado(a)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="agitado(a)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Agitado(a)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="sonolento(a)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Sonolento(a)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="com queixa de dor"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Com queixa de dor</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="febril"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Febril</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="choroso(a)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Choroso(a)</span></div>
       </div>
 
-      <label class="campo-label">Adicionar outro estado clínico</label>
+      <label class="campo-label" for="novoEstadoNome">Adicionar outro estado clínico</label>
       <div class="add-row">
         <input type="text" id="novoEstadoNome" placeholder="Ex: Hipotenso, com tosse..." onkeydown="if(event.key==='Enter'){event.preventDefault(); adicionarEstado();}">
-        <button type="button" class="add-btn" onclick="adicionarEstado()">+</button>
+        <button type="button" class="add-btn" aria-label="Adicionar estado clínico" onclick="adicionarEstado()">+</button>
       </div>
 
-      <div class="toggle-row on" onclick="alternarToggle(this)" style="margin-top:14px"><span>Em uso de fralda</span><div class="switch"></div><input type="checkbox" id="usoFralda" checked hidden></div>
+      <div class="toggle-row on" role="button" tabindex="0" aria-pressed="true" onclick="alternarToggle(this)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();alternarToggle(this);}" style="margin-top:14px"><span>Em uso de fralda</span><div class="switch"></div><input type="checkbox" id="usoFralda" checked hidden></div>
 
-      <label class="campo-label">Diurese (urina)</label>
+      <label class="campo-label" for="diurese">Diurese (urina)</label>
       <select id="diurese">
         <option value="Diurese presente em fralda">Presente em fralda</option>
         <option value="Diurese presente em vaso">Presente em vaso</option>
         <option value="Diurese ausente">Ausente</option>
       </select>
 
-      <label class="campo-label">Evacuação (fezes)</label>
+      <label class="campo-label" for="evacuacao">Evacuação (fezes)</label>
       <select id="evacuacao">
         <option value="Evacuação em vaso">Presente em vaso</option>
         <option value="Evacuação em fralda">Presente em fralda</option>
@@ -740,67 +149,44 @@
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>Medicação</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>Medicação</h2>
       <div class="sub">Toque para marcar o que foi administrado no plantão</div>
       <div class="chip-grid" id="listaMedicacoes">
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Puran (jejum)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Puran (jejum)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Aglucose 50mg (café, almoço e janta)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Aglucose 50mg (café, almoço e janta)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Glifage XR 500mg (café e almoço; 2 cp à noite)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Glifage XR 500mg (café/almoço; 2cp à noite)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Triplixam 10mg/2mg/10mg (manhã)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Triplixam 10/2/10mg (manhã)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Plenance 5mg (2ª, 4ª e 6ª à noite)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Plenance 5mg (2ª/4ª/6ª noite)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Linadib 5mg (almoço)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Linadib 5mg (almoço)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Vitamina Centrum (almoço)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Vitamina Centrum (almoço)</span>
-        </div>
-        <div class="chip chip-fixa" onclick="alternarChip(this)" data-valor="Vitamina D 7000 UI (sábado)">
-          <div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div>
-          <span class="nome">Vitamina D 7000 UI (sábado)</span>
-        </div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Puran (jejum)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Puran (jejum)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Aglucose 50mg (café, almoço e janta)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Aglucose 50mg (café, almoço e janta)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Glifage XR 500mg (café e almoço; 2 cp à noite)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Glifage XR 500mg (café/almoço; 2cp à noite)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Triplixam 10mg/2mg/10mg (manhã)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Triplixam 10/2/10mg (manhã)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Plenance 5mg (2ª, 4ª e 6ª à noite)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Plenance 5mg (2ª/4ª/6ª noite)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Linadib 5mg (almoço)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Linadib 5mg (almoço)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Vitamina Centrum (almoço)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Vitamina Centrum (almoço)</span></div>
+        <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Vitamina D 7000 UI (sábado)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Vitamina D 7000 UI (sábado)</span></div>
       </div>
 
-      <label class="campo-label">Adicionar outra medicação</label>
+      <label class="campo-label" for="novoMedNome">Adicionar outra medicação</label>
       <div class="add-row">
         <input type="text" id="novoMedNome" placeholder="Ex: Losartana 50mg (noite)" onkeydown="if(event.key==='Enter'){event.preventDefault(); adicionarMedicacao();}">
-        <button type="button" class="add-btn" onclick="adicionarMedicacao()">+</button>
+        <button type="button" class="add-btn" aria-label="Adicionar medicação" onclick="adicionarMedicacao()">+</button>
       </div>
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 11h18M3 15h18M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg></span>Rotina e cuidados</h2>
-      <label class="campo-label">Dieta oferecida</label>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M3 11h18M3 15h18M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg></span>Rotina e cuidados</h2>
+      <label class="campo-label" for="dieta">Dieta oferecida</label>
       <textarea id="dieta" rows="2" placeholder="Ex: arroz com ovos fritos, suco de maracujá..."></textarea>
 
-      <label class="campo-label">Higiene, decúbito e trocas de fralda</label>
-      <div class="sub" style="margin-bottom:8px">Adicione cada horário em que a troca/higiene foi realizada — não precisa ser em horário fixo</div>
+      <label class="campo-label" for="novoHorario">Higiene, decúbito e trocas de fralda</label>
+      <div class="sub" style="margin-bottom:8px">Adicione cada horário em que a troca/higiene foi realizada — o app avisa se o intervalo passar de 3h</div>
       <div class="add-row">
         <input type="time" id="novoHorario">
-        <button type="button" class="add-btn" onclick="adicionarHorario()">+</button>
+        <button type="button" class="add-btn" aria-label="Adicionar horário" onclick="adicionarHorario()">+</button>
       </div>
       <div class="horarios-lista" id="listaHorarios"></div>
+      <div class="aviso" id="alertaDecubito" hidden></div>
 
-      <label class="campo-label">Detalhes adicionais (opcional)</label>
+      <label class="campo-label" for="higieneDetalhes">Detalhes adicionais (opcional)</label>
       <textarea id="higieneDetalhes" rows="2" placeholder="Ex: banho de leito, pele íntegra, hidratação realizada..."></textarea>
 
-      <label class="campo-label">Observações / intercorrências</label>
+      <label class="campo-label" for="obs">Observações / intercorrências</label>
       <textarea id="obs" rows="2">Sem intercorrências.</textarea>
     </div>
 
@@ -810,8 +196,8 @@
       <div class="resumo-card" id="cartaoResumo">
         <div class="rc-header">
           <div class="rc-icones">
-            <div class="rc-icone"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
-            <div class="rc-icone"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            <div class="rc-icone"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+            <div class="rc-icone"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
           </div>
           <div class="rc-titulo">
             <h3 id="rcTitulo">Resumo de Evolução</h3>
@@ -819,92 +205,110 @@
           </div>
         </div>
         <hr>
-
         <div class="rc-texto-completo" id="rcTextoCompleto">—</div>
       </div>
 
       <button class="btn-imagem" id="btnEnviar" onclick="enviarWhatsapp()">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5C11 9 10.6 8 10.4 7.5c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.5 1.1 2.6c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5C11 9 10.6 8 10.4 7.5c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.5 1.1 2.6c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         Enviar no WhatsApp
       </button>
       <button class="btn-baixar" id="btnBaixar" onclick="baixarImagem()">Baixar imagem</button>
+      <button class="btn-baixar" onclick="copiarTexto()">Copiar só o texto</button>
     </div>
 
   </div>
 
+  <!-- ==================== GLICEMIA ==================== -->
   <div id="telaGlicemia" style="display:none">
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>Registro do dia<span id="statusConexaoGlicemia" class="status-conexao">conectando...</span></h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>Registro do dia<span id="statusConexaoGlicemia" class="status-conexao">conectando...</span></h2>
       <div class="sub">Compartilhado entre as três cuidadoras</div>
 
-      <label class="campo-label">Data do registro</label>
-      <input type="date" id="dataGlicemia">
+      <label class="campo-label" for="dataGlicemia">Data do registro</label>
+      <input type="date" id="dataGlicemia" onchange="carregarGlicemiaDaData()">
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg></span>Café da manhã</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg></span>Café da manhã</h2>
       <div class="grid-2">
         <div>
-          <label class="campo-label">Insulina</label>
-          <input type="text" id="insulinaCafe" placeholder="Ex: NPH (8ui)">
+          <label class="campo-label" for="insulinaCafe">Insulina</label>
+          <input type="text" id="insulinaCafe" placeholder="Ex: NPH (8ui)" oninput="avaliarGlicemiaCampo('cafe')">
         </div>
         <div class="vital-box">
           <div class="vital-unidade">Glicemia · mg/dL</div>
-          <input type="number" id="glicemiaCafe" placeholder="0">
+          <input type="number" id="glicemiaCafe" placeholder="0" inputmode="numeric" aria-label="Glicemia do café da manhã" oninput="avaliarGlicemiaCampo('cafe')">
         </div>
       </div>
+      <div class="aviso" id="alertaGlicemiaCafe" hidden></div>
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2C8 2 5 6 5 10c0 4 3 5 3 8a4 4 0 0 0 8 0c0-3 3-4 3-8 0-4-3-8-7-8z"/></svg></span>Almoço</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 2C8 2 5 6 5 10c0 4 3 5 3 8a4 4 0 0 0 8 0c0-3 3-4 3-8 0-4-3-8-7-8z"/></svg></span>Almoço</h2>
       <div class="grid-2">
         <div>
-          <label class="campo-label">Insulina</label>
-          <input type="text" id="insulinaAlmoco" placeholder="Ex: NPH (8ui)">
+          <label class="campo-label" for="insulinaAlmoco">Insulina</label>
+          <input type="text" id="insulinaAlmoco" placeholder="Ex: NPH (8ui)" oninput="avaliarGlicemiaCampo('almoco')">
         </div>
         <div class="vital-box">
           <div class="vital-unidade">Glicemia · mg/dL</div>
-          <input type="number" id="glicemiaAlmoco" placeholder="0">
+          <input type="number" id="glicemiaAlmoco" placeholder="0" inputmode="numeric" aria-label="Glicemia do almoço" oninput="avaliarGlicemiaCampo('almoco')">
         </div>
       </div>
+      <div class="aviso" id="alertaGlicemiaAlmoco" hidden></div>
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 11h18M3 15h18M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg></span>Janta</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M3 11h18M3 15h18M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2Z"/></svg></span>Janta</h2>
       <div class="grid-2">
         <div>
-          <label class="campo-label">Insulina</label>
-          <input type="text" id="insulinaJanta" placeholder="Ex: NPH (8ui)">
+          <label class="campo-label" for="insulinaJanta">Insulina</label>
+          <input type="text" id="insulinaJanta" placeholder="Ex: NPH (8ui)" oninput="avaliarGlicemiaCampo('janta')">
         </div>
         <div class="vital-box">
           <div class="vital-unidade">Glicemia · mg/dL</div>
-          <input type="number" id="glicemiaJanta" placeholder="0">
+          <input type="number" id="glicemiaJanta" placeholder="0" inputmode="numeric" aria-label="Glicemia da janta" oninput="avaliarGlicemiaCampo('janta')">
         </div>
       </div>
+      <div class="aviso" id="alertaGlicemiaJanta" hidden></div>
     </div>
 
     <button class="btn-gerar" onclick="salvarGlicemia()">Salvar registro do dia</button>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Relatório mensal</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span>Relatório mensal</h2>
       <div class="sub">Reúne todos os registros do mês selecionado</div>
 
-      <label class="campo-label">Mês de referência</label>
+      <label class="campo-label" for="mesGlicemia">Mês de referência</label>
       <input type="month" id="mesGlicemia">
 
       <div class="add-row" style="margin-top:14px">
         <button type="button" class="btn-gerar" style="margin:0" onclick="gerarTabelaGlicemia()">Ver tabela</button>
         <button type="button" class="btn-imagem" style="margin:0" onclick="enviarGlicemiaWhatsapp()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5C11 9 10.6 8 10.4 7.5c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.5 1.1 2.6c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.6-.8-1.9-.9-.3-.1-.4-.1-.6.1-.2.3-.7.9-.8 1-.1.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5C11 9 10.6 8 10.4 7.5c-.2-.4-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.1s1 2.5 1.1 2.6c.1.2 2 3 4.7 4.2.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.6-.7 1.9-1.3.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.6-.3z"/><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
           WhatsApp
         </button>
       </div>
+      <button type="button" class="btn-secundario" onclick="baixarTabelaGlicemia()">📷 Enviar tabela como imagem</button>
+      <button type="button" class="btn-secundario" onclick="imprimirRelatorioMensal()">📄 Relatório mensal em PDF (para o médico)</button>
     </div>
 
     <div class="card" id="areaTabelaGlicemia" style="display:none">
       <h2>Mês de referência: <span id="labelMesGlicemia"></span></h2>
-      <div style="overflow-x:auto">
+
+      <div id="painelTendencia" hidden>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="rotulo">Média</div><div class="valor" id="statMedia">—</div></div>
+          <div class="stat-box" id="boxMin"><div class="rotulo">Mínima</div><div class="valor" id="statMin">—</div></div>
+          <div class="stat-box" id="boxMax"><div class="rotulo">Máxima</div><div class="valor" id="statMax">—</div></div>
+          <div class="stat-box"><div class="rotulo">Fora da faixa</div><div class="valor" id="statFora">—</div></div>
+        </div>
+        <svg class="sparkline" id="sparkline" viewBox="0 0 300 70" aria-label="Tendência da média diária de glicemia"></svg>
+        <div class="legenda-faixa" id="legendaFaixa"></div>
+      </div>
+
+      <div style="overflow-x:auto; margin-top:14px">
         <table class="tabela-glicemia" id="tabelaGlicemia">
           <thead>
             <tr>
@@ -923,622 +327,10 @@
 
   </div>
 
-<script>
-  // Data e saudação
-  const hoje = new Date();
-  document.getElementById('dataAtual').valueAsDate = hoje;
-  document.getElementById('dataLegivel').innerText = hoje.toLocaleDateString('pt-BR', { weekday:'long', day:'2-digit', month:'long' });
-
-  // Controle Glicêmico — data e mês padrão
-  document.getElementById('dataGlicemia').valueAsDate = hoje;
-  document.getElementById('mesGlicemia').value = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`;
-
-  function mudarTela(tela){
-    const telas = { historico: 'telaHistorico', evolucao: 'telaEvolucao', glicemia: 'telaGlicemia' };
-    const tabs = { historico: 'tabHistorico', evolucao: 'tabEvolucao', glicemia: 'tabGlicemia' };
-    Object.keys(telas).forEach(nome => {
-      document.getElementById(telas[nome]).style.display = (nome === tela) ? 'block' : 'none';
-      document.getElementById(tabs[nome]).classList.toggle('ativo', nome === tela);
-    });
-  }
-
-  const hora = hoje.getHours();
-  let turnoInicial = 2; // noite
-  let saudacaoTexto = "Boa noite";
-  if (hora >= 5 && hora < 12) { saudacaoTexto = "Bom dia"; turnoInicial = 0; }
-  else if (hora >= 12 && hora < 18) { saudacaoTexto = "Boa tarde"; turnoInicial = 1; }
-  document.getElementById('saudacao').innerText = saudacaoTexto;
-
-  let turnoAtual = "Noite";
-  function selecionarTurno(nome, indice){
-    turnoAtual = nome;
-    document.querySelectorAll('.turno-btn').forEach(b => b.classList.remove('ativo'));
-    document.querySelector(`.turno-btn[data-turno="${nome}"]`).classList.add('ativo');
-    const posicoes = [ [40,20], [150,8], [260,20] ];
-    const [x,y] = posicoes[indice];
-    document.getElementById('arcoSol').setAttribute('cx', x);
-    document.getElementById('arcoSol').setAttribute('cy', y);
-    const cores = ['#F6C453', '#FFE9A8', '#C9D6E8'];
-    document.getElementById('arcoSol').setAttribute('fill', cores[indice]);
-  }
-  selecionarTurno(document.querySelector('.turno-btn.ativo').dataset.turno, turnoInicial);
-  // sincroniza visualmente ao carregar
-  document.querySelectorAll('.turno-btn').forEach((b,i) => {
-    if (i === turnoInicial) selecionarTurno(b.dataset.turno, i);
-  });
-
-  // ---- repasse de plantão ----
-  const NOMES_CUIDADORAS = ['Edna', 'Camila', 'Kauane'];
-  function popularRepasse(){
-    const atual = document.getElementById('cuidadora').value;
-    const select = document.getElementById('repasse');
-    const valorAnterior = select.value;
-    select.innerHTML = '<option value="">Selecione...</option>' +
-      NOMES_CUIDADORAS.filter(n => n !== atual).map(n => `<option value="${n}">${n}</option>`).join('');
-    if(valorAnterior && valorAnterior !== atual) select.value = valorAnterior;
-  }
-  document.getElementById('cuidadora').addEventListener('change', popularRepasse);
-  popularRepasse();
-
-  function alternarToggle(el){
-    el.classList.toggle('on');
-    const input = el.querySelector('input[type="checkbox"]');
-    input.checked = el.classList.contains('on');
-  }
-
-  function alternarChip(el){
-    el.classList.toggle('on');
-  }
-
-  // ---- adicionar estado clínico avulso ----
-  function adicionarEstado(){
-    const input = document.getElementById('novoEstadoNome');
-    const valor = input.value.trim();
-    if(!valor) return;
-    const cont = document.getElementById('listaEstados');
-    const div = document.createElement('div');
-    div.className = 'chip on';
-    div.dataset.valor = valor.toLowerCase();
-    div.innerHTML = `<div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">${valor}</span><span class="x" onclick="event.stopPropagation(); this.parentElement.remove()">✕</span>`;
-    div.addEventListener('click', function(e){
-      if(e.target.classList.contains('x')) return;
-      alternarChip(this);
-    });
-    cont.appendChild(div);
-    input.value = '';
-    input.focus();
-  }
-
-  // ---- adicionar medicação avulsa ----
-  function adicionarMedicacao(){
-    const input = document.getElementById('novoMedNome');
-    const valor = input.value.trim();
-    if(!valor) return;
-    const cont = document.getElementById('listaMedicacoes');
-    const div = document.createElement('div');
-    div.className = 'chip on';
-    div.dataset.valor = valor;
-    div.innerHTML = `<div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">${valor}</span><span class="x" onclick="event.stopPropagation(); this.parentElement.remove()">✕</span>`;
-    div.addEventListener('click', function(e){
-      if(e.target.classList.contains('x')) return;
-      alternarChip(this);
-    });
-    cont.appendChild(div);
-    input.value = '';
-    input.focus();
-  }
-
-  // ---- adicionar horário de higiene/troca de fralda ----
-  let horarios = [];
-  function periodoDoHorario(hhmm){
-    const h = parseInt(hhmm.split(':')[0], 10);
-    if(h < 6) return 'madrugada';
-    if(h < 12) return 'manhã';
-    if(h < 18) return 'tarde';
-    return 'noite';
-  }
-  function adicionarHorario(){
-    const input = document.getElementById('novoHorario');
-    if(!input.value) return;
-    horarios.push(input.value);
-    horarios.sort();
-    input.value = '';
-    renderHorarios();
-  }
-  function removerHorario(i){
-    horarios.splice(i, 1);
-    renderHorarios();
-  }
-  function renderHorarios(){
-    const cont = document.getElementById('listaHorarios');
-    if(horarios.length === 0){
-      cont.innerHTML = '<span class="vazio-aviso">Nenhum horário adicionado ainda</span>';
-      return;
-    }
-    cont.innerHTML = horarios.map((h, i) =>
-      `<div class="horario-chip">${h} · ${periodoDoHorario(h)}<span class="x" onclick="removerHorario(${i})">✕</span></div>`
-    ).join('');
-  }
-  renderHorarios();
-
-  let textoParaCompartilhar = "";
-
-  async function gerarRelatorio(){
-    const btnGerar = document.getElementById('btnGerar');
-    const textoBtnOriginal = btnGerar.innerText;
-    btnGerar.innerText = 'Gerando...';
-    btnGerar.disabled = true;
-
-    const dataRaw = document.getElementById('dataAtual').value;
-    const dataFormatada = dataRaw.split('-').reverse().join('/');
-
-    // Busca a glicemia/insulina do horário deste turno (Café=Manhã, Almoço=Tarde, Janta=Noite)
-    const mapaRefeicao = { 'Manhã': { chave: 'cafe', nome: 'Café da manhã' }, 'Tarde': { chave: 'almoco', nome: 'Almoço' }, 'Noite': { chave: 'janta', nome: 'Janta' } };
-    const refeicaoAtual = mapaRefeicao[turnoAtual];
-    let glicemiaTexto = '';
-    if(typeof window.buscarGlicemiaDiaFirebase === 'function'){
-      const registroDia = await window.buscarGlicemiaDiaFirebase(dataRaw);
-      if(registroDia === undefined){
-        glicemiaTexto = `Controle Glicêmico (${refeicaoAtual.nome})\nNão foi possível carregar — verifique a internet.`;
-      } else {
-        const dadosRefeicao = registroDia ? registroDia[refeicaoAtual.chave] : null;
-        if(dadosRefeicao && (dadosRefeicao.glicemia || dadosRefeicao.insulina)){
-          glicemiaTexto = `Controle Glicêmico (${refeicaoAtual.nome})\nGlicemia: ${dadosRefeicao.glicemia || '-'} mg/dL\nInsulina: ${dadosRefeicao.insulina || '-'}`;
-        } else {
-          glicemiaTexto = `Controle Glicêmico (${refeicaoAtual.nome})\nNão registrado neste horário.`;
-        }
-      }
-    }
-
-    let estados = [];
-    document.querySelectorAll('#listaEstados .chip.on').forEach(c => estados.push(c.dataset.valor));
-    const estadoTexto = estados.length > 0
-      ? estados.map(e => e.charAt(0).toUpperCase() + e.slice(1)).join(", ")
-      : "Não informado";
-
-    const usaFralda = document.getElementById('usoFralda').checked;
-
-    let paciente = "Paciente acamada";
-    if(estados.length > 0) paciente += ", " + estados.join(", ");
-    if(usaFralda) paciente += ".\nEm uso de fralda";
-
-    const diurese = document.getElementById('diurese').value;
-    const evacuacao = document.getElementById('evacuacao').value;
-
-    let medsCheckadas = [];
-    document.querySelectorAll('#listaMedicacoes .chip.on').forEach(c => medsCheckadas.push(c.dataset.valor));
-    let medsTexto = "";
-    if(medsCheckadas.length > 0){
-      medsTexto = "Medicação que usa:\n" + medsCheckadas.join("\n");
-    }
-
-    const dieta = document.getElementById('dieta').value.trim();
-    const dietaTexto = dieta ? `Dieta 🍽️\n${dieta}` : "";
-
-    const linhasHorarios = horarios.map(h => `${h} · ${periodoDoHorario(h)}`);
-    let higieneTexto = "";
-    if(linhasHorarios.length > 0){
-      higieneTexto = `Higiene íntima, mudança de decúbito e trocas de fraldas:\n${linhasHorarios.join("\n")}\nRealizada ☝🏻`;
-    }
-    const higieneDetalhes = document.getElementById('higieneDetalhes').value.trim();
-    if(higieneDetalhes) higieneTexto += (higieneTexto ? "\n" : "") + higieneDetalhes;
-
-    const obs = document.getElementById('obs').value.trim();
-    const cuidadora = document.getElementById('cuidadora').value;
-    const repasse = document.getElementById('repasse').value;
-
-    const corpoTexto = `${paciente}.\nEliminações fisiológicas.\n${diurese}.\n${evacuacao}.\n\n${glicemiaTexto}\n\n${medsTexto}\n\n${dietaTexto}\n\n${higieneTexto}\n\n${obs}\n\nSegue os cuidados com a ${cuidadora}.${repasse ? `\nRepasse do plantão para ${repasse}.` : ""}\n\nAtenciosamente,\n${cuidadora}`.replace(/\n{3,}/g, '\n\n').trim();
-
-    textoParaCompartilhar = `${saudacaoTexto}! 🌺\n\nEvolução ${turnoAtual} - ${dataFormatada}\n\n${corpoTexto}`;
-
-    const campos = {
-      rcSub: `Plantão ${turnoAtual} · ${dataFormatada}`,
-      texto: corpoTexto
-    };
-
-    aplicarCamposNoCartao(campos);
-    document.getElementById('resultado').style.display = "block";
-    document.getElementById('resultado').scrollIntoView({ behavior:'smooth' });
-
-    salvarHistorico({ dataFormatada, turno: turnoAtual, cuidadora, repasse, campos, textoParaCompartilhar });
-
-    btnGerar.innerText = textoBtnOriginal;
-    btnGerar.disabled = false;
-  }
-
-  function aplicarCamposNoCartao(c){
-    document.getElementById('rcSub').innerText = c.rcSub;
-    document.getElementById('rcTextoCompleto').innerText = c.texto;
-  }
-
-  // ---- histórico de evoluções (sincronizado via Firebase — compartilhado entre as cuidadoras) ----
-  let cacheHistoricoAtual = [];
-
-  function salvarHistorico(registro){
-    if(typeof window.salvarNoFirebase === 'function'){
-      window.salvarNoFirebase(registro);
-    } else {
-      console.warn('Firebase ainda não carregou — não foi possível salvar no histórico.');
-      alert('O cartão foi gerado, mas não foi possível salvá-lo no histórico compartilhado (sem conexão com o Firebase). Você ainda pode enviar/baixar a imagem normalmente.');
-    }
-  }
-
-  function excluirHistorico(id){
-    if(typeof window.excluirDoFirebase === 'function'){
-      window.excluirDoFirebase(id);
-    }
-  }
-
-  function verHistorico(id){
-    const registro = cacheHistoricoAtual.find(r => r.id === id);
-    if(!registro) return;
-    aplicarCamposNoCartao(registro.campos);
-    textoParaCompartilhar = registro.textoParaCompartilhar || '';
-    document.getElementById('resultado').style.display = 'block';
-    document.getElementById('resultado').scrollIntoView({ behavior:'smooth' });
-  }
-
-  // Chamada pelo módulo Firebase sempre que o histórico compartilhado muda
-  function formatarDataBR(d){
-    const dia = String(d.getDate()).padStart(2, '0');
-    const mes = String(d.getMonth() + 1).padStart(2, '0');
-    return `${dia}/${mes}/${d.getFullYear()}`;
-  }
-
-  function parseDataBR(str){
-    if(!str) return null;
-    const partes = str.split('/');
-    if(partes.length !== 3) return null;
-    const [dia, mes, ano] = partes;
-    return new Date(Number(ano), Number(mes) - 1, Number(dia));
-  }
-
-  function capitalizar(txt){
-    return txt.charAt(0).toUpperCase() + txt.slice(1);
-  }
-
-  window.renderHistorico = function(lista){
-    cacheHistoricoAtual = lista;
-    popularFiltroMes(lista);
-    renderizarListaHistoricoFiltrado();
-  };
-
-  function popularFiltroMes(lista){
-    const select = document.getElementById('filtroMes');
-    const valorAtual = select.value;
-    const meses = new Map();
-    lista.forEach(r => {
-      const d = parseDataBR(r.dataFormatada);
-      if(!d) return;
-      const chave = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      if(!meses.has(chave)) meses.set(chave, capitalizar(d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })));
-    });
-    const chavesOrdenadas = [...meses.keys()].sort().reverse();
-    select.innerHTML = '<option value="">Todos os meses</option>' +
-      chavesOrdenadas.map(c => `<option value="${c}">${meses.get(c)}</option>`).join('');
-    if(chavesOrdenadas.includes(valorAtual)) select.value = valorAtual;
-  }
-
-  function renderizarListaHistoricoFiltrado(){
-    const mesFiltro = document.getElementById('filtroMes').value;
-    const cuidadoraFiltro = document.getElementById('filtroCuidadora').value;
-
-    const listaFiltrada = cacheHistoricoAtual.filter(r => {
-      if(cuidadoraFiltro && r.cuidadora !== cuidadoraFiltro) return false;
-      if(mesFiltro){
-        const d = parseDataBR(r.dataFormatada);
-        const chave = d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}` : '';
-        if(chave !== mesFiltro) return false;
-      }
-      return true;
-    });
-
-    const cont = document.getElementById('listaHistorico');
-    if(!cont) return;
-    if(listaFiltrada.length === 0){
-      cont.innerHTML = '<span class="vazio-aviso">Nenhuma evolução encontrada com esse filtro</span>';
-      return;
-    }
-
-    const hojeStr = formatarDataBR(new Date());
-    const ontemD = new Date();
-    ontemD.setDate(ontemD.getDate() - 1);
-    const ontemStr = formatarDataBR(ontemD);
-
-    let html = '';
-    let mesAnterior = null;
-    let diaAnterior = null;
-
-    listaFiltrada.forEach(r => {
-      const d = parseDataBR(r.dataFormatada);
-      const chaveMes = d ? `${d.getFullYear()}-${d.getMonth()}` : 'sem-data';
-
-      if(chaveMes !== mesAnterior){
-        const rotuloMes = d ? capitalizar(d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })) : 'Data desconhecida';
-        html += `<div class="hist-mes">${rotuloMes}</div>`;
-        mesAnterior = chaveMes;
-        diaAnterior = null; // força novo cabeçalho de dia ao trocar de mês
-      }
-
-      if(r.dataFormatada !== diaAnterior){
-        let rotuloDia = r.dataFormatada || 'Data não informada';
-        if(r.dataFormatada === hojeStr) rotuloDia = 'Hoje';
-        else if(r.dataFormatada === ontemStr) rotuloDia = 'Ontem';
-        html += `<div class="hist-dia">${rotuloDia}</div>`;
-        diaAnterior = r.dataFormatada;
-      }
-
-      html += `
-        <div class="hist-item">
-          <div>
-            <div class="hist-titulo">${r.turno}</div>
-            <div class="hist-sub">${r.cuidadora}${r.repasse ? ' → ' + r.repasse : ''}</div>
-          </div>
-          <div class="hist-acoes">
-            <button type="button" class="hist-btn" onclick="verHistorico('${r.id}')">Ver</button>
-            <button type="button" class="hist-btn hist-excluir" onclick="excluirHistorico('${r.id}')">✕</button>
-          </div>
-        </div>
-      `;
-    });
-
-    cont.innerHTML = html;
-  }
-
-  document.getElementById('listaHistorico').innerHTML = '<span class="vazio-aviso">Conectando ao histórico compartilhado...</span>';
-
-  async function enviarWhatsapp(){
-    const btn = document.getElementById('btnEnviar');
-    const textoOriginal = btn.innerHTML;
-    const cartao = document.getElementById('cartaoResumo');
-    btn.innerHTML = 'Gerando imagem...';
-    btn.disabled = true;
-    try{
-      const canvas = await html2canvas(cartao, { scale: 3, backgroundColor: '#FFFDF8', useCORS: true });
-      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-      const dataRaw = document.getElementById('dataAtual').value;
-      const nomeArquivo = `evolucao-${dataRaw}-${turnoAtual.toLowerCase()}.png`;
-      const file = new File([blob], nomeArquivo, { type: 'image/png' });
-
-      if(navigator.canShare && navigator.canShare({ files: [file] })){
-        await navigator.share({ files: [file], title: 'Evolução do plantão' });
-        btn.innerHTML = '✅ Enviado!';
-      } else {
-        const link = document.createElement('a');
-        link.download = nomeArquivo;
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        btn.innerHTML = '✅ Imagem baixada — anexe no WhatsApp';
-      }
-    } catch(e){
-      btn.innerHTML = 'Não foi possível gerar a imagem';
-    } finally {
-      btn.disabled = false;
-      setTimeout(() => { btn.innerHTML = textoOriginal; }, 2500);
-    }
-  }
-
-  async function baixarImagem(){
-    const btn = document.getElementById('btnBaixar');
-    const cartao = document.getElementById('cartaoResumo');
-    const textoOriginal = btn.innerHTML;
-    btn.innerHTML = 'Gerando...';
-    try{
-      const canvas = await html2canvas(cartao, { scale: 3, backgroundColor: '#FFFDF8', useCORS: true });
-      const link = document.createElement('a');
-      const dataRaw = document.getElementById('dataAtual').value;
-      link.download = `evolucao-${dataRaw}-${turnoAtual.toLowerCase()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      btn.innerHTML = '✅ Baixado!';
-    } catch(e){
-      btn.innerHTML = 'Erro ao gerar imagem';
-    } finally {
-      setTimeout(() => { btn.innerHTML = textoOriginal; }, 2000);
-    }
-  }
-
-  // ---- Controle Glicêmico (relatório separado, próprio horário: Café/Almoço/Janta) ----
-  async function salvarGlicemia(){
-    const dataIso = document.getElementById('dataGlicemia').value;
-    if(!dataIso){ alert('Selecione uma data válida.'); return; }
-    const [ano, mes, dia] = dataIso.split('-');
-
-    const registro = {
-      data: dataIso,
-      dia: dia,
-      mesAno: `${ano}-${mes}`,
-      cafe: { insulina: document.getElementById('insulinaCafe').value, glicemia: document.getElementById('glicemiaCafe').value },
-      almoco: { insulina: document.getElementById('insulinaAlmoco').value, glicemia: document.getElementById('glicemiaAlmoco').value },
-      janta: { insulina: document.getElementById('insulinaJanta').value, glicemia: document.getElementById('glicemiaJanta').value }
-    };
-
-    if(!registro.cafe.glicemia && !registro.almoco.glicemia && !registro.janta.glicemia){
-      alert('Preencha pelo menos um valor de glicemia antes de salvar.');
-      return;
-    }
-    if(typeof window.salvarGlicemiaFirebase !== 'function'){
-      alert('Sem conexão com o banco compartilhado. Verifique sua internet e tente novamente.');
-      return;
-    }
-
-    const ok = await window.salvarGlicemiaFirebase(dataIso, registro);
-    if(ok){
-      alert(`Registro de ${dia}/${mes}/${ano} salvo com sucesso!`);
-      document.getElementById('glicemiaCafe').value = '';
-      document.getElementById('glicemiaAlmoco').value = '';
-      document.getElementById('glicemiaJanta').value = '';
-      if(document.getElementById('areaTabelaGlicemia').style.display === 'block'){
-        gerarTabelaGlicemia();
-      }
-    }
-  }
-
-  async function buscarDadosGlicemiaMes(mesSelecionado){
-    if(typeof window.buscarGlicemiaMesFirebase !== 'function'){
-      alert('Sem conexão com o banco compartilhado. Verifique sua internet e tente novamente.');
-      return null;
-    }
-    return await window.buscarGlicemiaMesFirebase(mesSelecionado);
-  }
-
-  async function gerarTabelaGlicemia(){
-    const mesSelecionado = document.getElementById('mesGlicemia').value;
-    if(!mesSelecionado){ alert('Selecione um mês e ano para o relatório.'); return; }
-    const [ano, mes] = mesSelecionado.split('-');
-    document.getElementById('labelMesGlicemia').innerText = `${mes}/${ano}`;
-
-    const dados = await buscarDadosGlicemiaMes(mesSelecionado);
-    if(dados === null) return;
-
-    const tbody = document.querySelector('#tabelaGlicemia tbody');
-    tbody.innerHTML = '';
-    if(dados.length === 0){
-      tbody.innerHTML = '<tr><td colspan="4" style="padding:20px;">Nenhum registro encontrado para este mês.</td></tr>';
-    } else {
-      dados.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.dia}/${mes}</td>
-          <td>${item.cafe.glicemia || '-'}<br><small>${item.cafe.insulina || '-'}</small></td>
-          <td>${item.almoco.glicemia || '-'}<br><small>${item.almoco.insulina || '-'}</small></td>
-          <td>${item.janta.glicemia || '-'}<br><small>${item.janta.insulina || '-'}</small></td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-    document.getElementById('areaTabelaGlicemia').style.display = 'block';
-  }
-
-  async function enviarGlicemiaWhatsapp(){
-    const mesSelecionado = document.getElementById('mesGlicemia').value;
-    if(!mesSelecionado){ alert('Selecione um mês e ano para o relatório.'); return; }
-
-    const dados = await buscarDadosGlicemiaMes(mesSelecionado);
-    if(dados === null) return;
-    if(dados.length === 0){ alert('Nenhum registro encontrado para o mês selecionado.'); return; }
-
-    const [ano, mes] = mesSelecionado.split('-');
-    let texto = `*📊 MAPA GLICÊMICO - ${mes}/${ano}*\n\n`;
-    dados.forEach(item => {
-      texto += `*Dia ${item.dia}/${mes}*\n`;
-      texto += `☕ ${item.cafe.glicemia || '-'} (${item.cafe.insulina || '-'})\n`;
-      texto += `🍲 ${item.almoco.glicemia || '-'} (${item.almoco.insulina || '-'})\n`;
-      texto += `🍽️ ${item.janta.glicemia || '-'} (${item.janta.insulina || '-'})\n`;
-      texto += `---------------------\n`;
-    });
-
-    const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-    window.open(url, '_blank');
-  }
-</script>
-
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCsdLUMBxwd7Q0ebeaQoNmwPZs37eOCAp8",
-    authDomain: "evolucao-cuidadoras.firebaseapp.com",
-    projectId: "evolucao-cuidadoras",
-    storageBucket: "evolucao-cuidadoras.firebasestorage.app",
-    messagingSenderId: "141542865889",
-    appId: "1:141542865889:web:45fb42e67887642f16f0a0"
-  };
-
-  if(typeof firebase === 'undefined'){
-    console.error("SDK do Firebase não carregou (sem internet ou domínio bloqueado).");
-    const cont = document.getElementById('listaHistorico');
-    if(cont) cont.innerHTML = '<span class="vazio-aviso">Não foi possível carregar o histórico compartilhado (sem internet?). O restante do app funciona normalmente.</span>';
-    definirStatusConexao('offline');
-  } else {
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const evolucoesRef = db.collection("evolucoes");
-    const glicemiaRef = db.collection("glicemia");
-
-    // Salva/atualiza o registro glicêmico do dia (doc por data — evita duplicar o mesmo dia)
-    window.salvarGlicemiaFirebase = async function(dataIso, registro){
-      try{
-        await glicemiaRef.doc(dataIso).set(registro);
-        return true;
-      }catch(e){
-        console.error("Erro ao salvar registro glicêmico:", e);
-        alert(`Não foi possível salvar o registro.\nMotivo: ${e.code || e.message}`);
-        return false;
-      }
-    };
-
-    // Busca o registro glicêmico de um único dia (usado no relatório de evolução do plantão)
-    window.buscarGlicemiaDiaFirebase = async function(dataIso){
-      try{
-        const doc = await glicemiaRef.doc(dataIso).get();
-        return doc.exists ? doc.data() : null;
-      }catch(e){
-        console.error("Erro ao buscar glicemia do dia:", e);
-        return undefined; // erro de conexão/permissão — diferente de "não existe registro"
-      }
-    };
-
-    // Busca todos os registros glicêmicos de um mês (ex: "2026-07")
-    window.buscarGlicemiaMesFirebase = async function(mesAno){
-      try{
-        const snap = await glicemiaRef.where("mesAno", "==", mesAno).get();
-        const lista = snap.docs.map(d => d.data());
-        lista.sort((a, b) => a.data.localeCompare(b.data));
-        return lista;
-      }catch(e){
-        console.error("Erro ao buscar registros glicêmicos:", e);
-        alert(`Não foi possível carregar o relatório.\nMotivo: ${e.code || e.message}`);
-        return null;
-      }
-    };
-
-    // Salva uma nova evolução no banco compartilhado
-    window.salvarNoFirebase = async function(registro){
-      try{
-        await evolucoesRef.add({ ...registro, criadoEm: firebase.firestore.FieldValue.serverTimestamp() });
-      }catch(e){
-        console.error("Erro ao salvar no Firebase:", e);
-        alert(`Não foi possível salvar no histórico compartilhado.\nMotivo: ${e.code || e.message}`);
-      }
-    };
-
-    // Remove uma evolução do banco compartilhado
-    window.excluirDoFirebase = async function(id){
-      try{
-        await evolucoesRef.doc(id).delete();
-      }catch(e){
-        console.error("Erro ao excluir no Firebase:", e);
-        alert(`Não foi possível excluir esse registro.\nMotivo: ${e.code || e.message}`);
-      }
-    };
-
-    // Ouve o histórico em tempo real — qualquer cuidadora que salvar aparece para todas
-    evolucoesRef.orderBy("criadoEm", "desc").limit(60).onSnapshot((snapshot) => {
-      definirStatusConexao(snapshot.metadata.fromCache ? 'offline' : 'online');
-      const lista = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      if(typeof window.renderHistorico === 'function') window.renderHistorico(lista);
-    }, (erro) => {
-      console.error("Erro ao conectar ao histórico compartilhado:", erro);
-      definirStatusConexao('offline');
-      const cont = document.getElementById('listaHistorico');
-      if(cont) cont.innerHTML = '<span class="vazio-aviso">Não foi possível conectar ao histórico compartilhado. Verifique sua internet.</span>';
-    });
-  }
-
-  function definirStatusConexao(estado){
-    ['statusConexao', 'statusConexaoGlicemia'].forEach(id => {
-      const badge = document.getElementById(id);
-      if(!badge) return;
-      badge.classList.remove('online', 'offline');
-      if(estado === 'online'){
-        badge.classList.add('online');
-        badge.innerText = '🟢 sincronizado';
-      } else {
-        badge.classList.add('offline');
-        badge.innerText = '🔴 sem conexão';
-      }
-    });
-  }
-</script>
-
+  <div id="toasts" aria-live="polite"></div>
+  <div id="areaImpressao"></div>
+
+<script src="js/dados.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
