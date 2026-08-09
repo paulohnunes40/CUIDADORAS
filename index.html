@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
 <title>Evolução · Registro de Plantão</title>
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +17,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Evolução">
-<meta name="theme-color" content="#34503E">
+<meta name="theme-color" content="#34503E" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1B2721" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 
@@ -40,16 +42,10 @@
     </div>
   </div>
 
-  <div class="tabs-tela" role="tablist">
-    <div class="tab-tela" id="tabHistorico" role="tab" tabindex="0" aria-selected="false" onclick="mudarTela('historico')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mudarTela('historico');}">🕒 Histórico</div>
-    <div class="tab-tela ativo" id="tabEvolucao" role="tab" tabindex="0" aria-selected="true" onclick="mudarTela('evolucao')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mudarTela('evolucao');}">📋 Evolução</div>
-    <div class="tab-tela" id="tabGlicemia" role="tab" tabindex="0" aria-selected="false" onclick="mudarTela('glicemia')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mudarTela('glicemia');}">🩸 Glicemia</div>
-  </div>
-
   <div class="container">
 
   <!-- ==================== HISTÓRICO ==================== -->
-  <div id="telaHistorico" style="display:none">
+  <div id="telaHistorico" role="tabpanel" aria-labelledby="tabHistorico" style="display:none">
 
     <div class="card">
       <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></span>Histórico de evoluções<span id="statusConexao" class="status-conexao">conectando...</span></h2>
@@ -66,7 +62,11 @@
           <select id="filtroCuidadora" onchange="renderizarListaHistoricoFiltrado()"></select>
         </div>
       </div>
-      <div id="listaHistorico"><span class="vazio-aviso">Conectando ao histórico compartilhado...</span></div>
+      <div id="listaHistorico" aria-busy="true">
+        <div class="esqueleto"><span class="esq-linha esq-curta"></span><span class="esq-linha"></span></div>
+        <div class="esqueleto"><span class="esq-linha esq-curta"></span><span class="esq-linha"></span></div>
+        <div class="esqueleto"><span class="esq-linha esq-curta"></span><span class="esq-linha"></span></div>
+      </div>
       <button type="button" class="btn-secundario" id="btnMaisHistorico" hidden onclick="carregarMaisHistorico()">Carregar registros mais antigos</button>
     </div>
 
@@ -81,7 +81,7 @@
   </div>
 
   <!-- ==================== EVOLUÇÃO ==================== -->
-  <div id="telaEvolucao">
+  <div id="telaEvolucao" role="tabpanel" aria-labelledby="tabEvolucao">
 
     <div class="banner-pendente" id="bannerRascunho" hidden></div>
     <div class="banner-pendente" id="bannerPendente" hidden></div>
@@ -112,7 +112,7 @@
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4.318 6.318a4.5 4.5 0 0 0 0 6.364L12 20.364l7.682-7.682a4.5 4.5 0 0 0-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 0 0-6.364 0Z"/></svg></span>Estado clínico</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M4.318 6.318a4.5 4.5 0 0 0 0 6.364L12 20.364l7.682-7.682a4.5 4.5 0 0 0-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 0 0-6.364 0Z"/></svg></span>Estado clínico<span class="contador" id="contadorEstados" hidden></span></h2>
       <div class="sub">Toque para marcar todos os estados observados no plantão</div>
       <div class="chip-grid" id="listaEstados">
         <div class="chip chip-fixa on" role="button" tabindex="0" aria-pressed="true" data-valor="consciente"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Consciente</span></div>
@@ -149,7 +149,7 @@
     </div>
 
     <div class="card">
-      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>Medicação</h2>
+      <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/></svg></span>Medicação<span class="contador" id="contadorMedicacoes" hidden></span></h2>
       <div class="sub">Toque para marcar o que foi administrado no plantão</div>
       <div class="chip-grid" id="listaMedicacoes">
         <div class="chip chip-fixa" role="button" tabindex="0" aria-pressed="false" data-valor="Puran (jejum)"><div class="dot"><svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></div><span class="nome">Puran (jejum)</span></div>
@@ -190,7 +190,9 @@
       <textarea id="obs" rows="2">Sem intercorrências.</textarea>
     </div>
 
-    <button class="btn-gerar" id="btnGerar" onclick="gerarRelatorio()">Gerar relatório de evolução</button>
+    <div class="barra-acao">
+      <button class="btn-gerar" id="btnGerar" onclick="gerarRelatorio()">Gerar relatório de evolução</button>
+    </div>
 
     <div id="resultado">
       <div class="resumo-card" id="cartaoResumo">
@@ -219,7 +221,7 @@
   </div>
 
   <!-- ==================== GLICEMIA ==================== -->
-  <div id="telaGlicemia" style="display:none">
+  <div id="telaGlicemia" role="tabpanel" aria-labelledby="tabGlicemia" style="display:none">
 
     <div class="card">
       <h2><span class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>Registro do dia<span id="statusConexaoGlicemia" class="status-conexao">conectando...</span></h2>
@@ -326,6 +328,21 @@
   </div>
 
   </div>
+
+  <nav class="nav-inferior" role="tablist" aria-label="Seções do app">
+    <button type="button" class="nav-item" id="tabHistorico" role="tab" aria-controls="telaHistorico" aria-selected="false" onclick="mudarTela('historico')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span>Histórico</span>
+    </button>
+    <button type="button" class="nav-item ativo" id="tabEvolucao" role="tab" aria-controls="telaEvolucao" aria-selected="true" onclick="mudarTela('evolucao')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M9 3h6a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1Z"/><path d="M16 5h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2"/><path d="M8 12h8M8 16h5"/></svg>
+      <span>Evolução</span>
+    </button>
+    <button type="button" class="nav-item" id="tabGlicemia" role="tab" aria-controls="telaGlicemia" aria-selected="false" onclick="mudarTela('glicemia')">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><path d="M12 3s6 6.5 6 10.5A6 6 0 0 1 6 13.5C6 9.5 12 3 12 3Z"/></svg>
+      <span>Glicemia</span>
+    </button>
+  </nav>
 
   <div id="toasts" aria-live="polite"></div>
   <div id="areaImpressao"></div>

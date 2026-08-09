@@ -157,6 +157,7 @@ function iniciar(){
   selecionarTurno(turnoInicial, indiceTurno(turnoInicial));
 
   renderHorarios();
+  atualizarContadores();
   registrarAutoSalvamento();
   restaurarRascunho(rascunhoSalvo);
   conectarHistorico();
@@ -232,7 +233,20 @@ function alternarToggle(el){
 function alternarChip(el){
   el.classList.toggle('on');
   el.setAttribute('aria-pressed', el.classList.contains('on') ? 'true' : 'false');
+  atualizarContadores();
   salvarRascunho();
+}
+
+// Mostra no título do cartão quantos itens estão marcados — a cuidadora
+// enxerga o que já preencheu sem precisar reler a lista inteira.
+function atualizarContadores(){
+  [['listaEstados','contadorEstados'], ['listaMedicacoes','contadorMedicacoes']].forEach(([lista, badge]) => {
+    const el = $(badge);
+    if(!el) return;
+    const n = $(lista).querySelectorAll('.chip.on').length;
+    el.innerText = n === 1 ? '1 marcado' : n + ' marcados';
+    el.hidden = n === 0;
+  });
 }
 
 const SVG_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke-width="3" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
@@ -247,7 +261,7 @@ function criarChipEl(item){
   div.innerHTML = `<div class="dot">${SVG_CHECK}</div><span class="nome">${escaparHtml(item.nome)}</span>` +
     (item.fixa ? '' : '<button type="button" class="x" aria-label="Remover">✕</button>');
   div.addEventListener('click', e => {
-    if(e.target.classList.contains('x')){ e.stopPropagation(); div.remove(); salvarRascunho(); return; }
+    if(e.target.classList.contains('x')){ e.stopPropagation(); div.remove(); atualizarContadores(); salvarRascunho(); return; }
     alternarChip(div);
   });
   div.addEventListener('keydown', e => {
@@ -277,6 +291,7 @@ function aplicarChips(containerId, salvos){
   salvos.filter(s => !valoresFixos.has(s.valor)).forEach(s => resultado.push({ ...s, fixa: false }));
   cont.innerHTML = '';
   resultado.forEach(item => cont.appendChild(criarChipEl(item)));
+  atualizarContadores();
 }
 
 function adicionarChipAvulso(inputId, containerId){
@@ -294,6 +309,7 @@ function adicionarChipAvulso(inputId, containerId){
   }
   input.value = '';
   input.focus();
+  atualizarContadores();
   salvarRascunho();
 }
 
@@ -572,7 +588,7 @@ function restaurarRascunho(bruto){
   banner.innerHTML =
     `<span>📝 Você tem um rascunho não enviado (${r.dados.turno || ''} · ${isoParaBR(r.dados.dataIso) || ''}).</span>` +
     `<button type="button" id="btnRestaurar">Restaurar</button>` +
-    `<button type="button" id="btnDescartar" style="background:transparent;color:#7A4A12;text-decoration:underline">Descartar</button>`;
+    `<button type="button" id="btnDescartar" style="background:transparent;color:inherit;text-decoration:underline">Descartar</button>`;
   $('btnRestaurar').onclick = () => {
     edicaoId = r.edicaoId || null;
     aplicarDados(r.dados);
@@ -602,6 +618,7 @@ function repetirPlantaoAnterior(){
   copia.horarios = [];                   // horários são sempre do plantão atual
   copia.obs = 'Sem intercorrências.';
   aplicarDados(copia, { manterData: true });
+  mostrarResultado(false);
   salvarRascunho();
   aviso(`Copiado do plantão ${base.turno.toLowerCase()} de ${base.dataFormatada}. Confira antes de gerar.`, 'ok');
 }
@@ -704,7 +721,7 @@ async function gerarRelatorio(){
     textoParaCompartilhar = `${saudacaoTexto}! 🌺\n\nEvolução ${turnoAtual} - ${dataFormatada}\n\n${corpoTexto}`;
     const campos = { rcSub: `Plantão ${turnoAtual} · ${dataFormatada}`, texto: corpoTexto };
     aplicarCamposNoCartao(campos);
-    $('resultado').style.display = 'block';
+    mostrarResultado(true);
     $('resultado').scrollIntoView({ behavior: 'smooth' });
 
     const registro = {
@@ -740,6 +757,14 @@ async function gerarRelatorio(){
   }
 }
 
+// Mostra/esconde o cartão-resultado. Enquanto ele está escondido o botão
+// principal fica grudado no rodapé; com o resultado à vista, volta ao fluxo.
+function mostrarResultado(visivel){
+  $('resultado').style.display = visivel ? 'block' : 'none';
+  const barra = document.querySelector('.barra-acao');
+  if(barra) barra.classList.toggle('solta', visivel);
+}
+
 function aplicarCamposNoCartao(c){
   $('rcSub').innerText = c.rcSub;
   $('rcTextoCompleto').innerText = c.texto;
@@ -750,8 +775,9 @@ function aplicarCamposNoCartao(c){
    --------------------------------------------------------------------- */
 function conectarHistorico(){
   if(!window.DB || !DB.pronto){
+    $('listaHistorico').setAttribute('aria-busy', 'false');
     $('listaHistorico').innerHTML =
-      '<span class="vazio-aviso">Não foi possível carregar o histórico compartilhado (sem internet no primeiro acesso). O restante do app funciona normalmente.</span>';
+      '<span class="vazio-aviso">📡 Não foi possível carregar o histórico compartilhado (sem internet no primeiro acesso).<br>O restante do app funciona normalmente.</span>';
     definirStatusConexao('offline');
     return;
   }
@@ -765,8 +791,9 @@ function conectarHistorico(){
     avaliarPendencia();
     $('btnMaisHistorico').hidden = lista.length < limiteHistorico;
   }, () => {
+    $('listaHistorico').setAttribute('aria-busy', 'false');
     $('listaHistorico').innerHTML =
-      '<span class="vazio-aviso">Não foi possível conectar ao histórico compartilhado. Verifique sua internet.</span>';
+      '<span class="vazio-aviso">📡 Não foi possível conectar ao histórico compartilhado.<br>Verifique sua internet.</span>';
   });
 }
 
@@ -816,8 +843,12 @@ function renderizarListaHistoricoFiltrado(){
   });
 
   const cont = $('listaHistorico');
+  cont.setAttribute('aria-busy', 'false');
   if(lista.length === 0){
-    cont.innerHTML = '<span class="vazio-aviso">Nenhuma evolução encontrada com esse filtro</span>';
+    const semFiltro = !mesFiltro && !cuidadoraFiltro;
+    cont.innerHTML = '<span class="vazio-aviso">' + (semFiltro
+      ? '📋 Nenhuma evolução registrada ainda.<br>Abra a aba Evolução para criar a primeira.'
+      : '🔍 Nenhuma evolução encontrada com esse filtro.') + '</span>';
     return;
   }
 
@@ -871,7 +902,7 @@ function verHistorico(id){
   aplicarCamposNoCartao(r.campos);
   textoParaCompartilhar = r.textoParaCompartilhar || '';
   mudarTela('evolucao');
-  $('resultado').style.display = 'block';
+  mostrarResultado(true);
   // Espera o scroll da troca de tela terminar antes de rolar até o cartão.
   setTimeout(() => $('resultado').scrollIntoView({ behavior: 'smooth' }), 350);
 }
@@ -885,6 +916,7 @@ function editarHistorico(id){
   }
   edicaoId = id;
   aplicarDados({ ...r.dados, dataIso: isoDoRegistro(r), turno: r.turno });
+  mostrarResultado(false);   // o cartão antigo não vale mais enquanto se edita
   atualizarModoEdicao();
   mudarTela('evolucao');
   aviso('Editando a evolução de ' + r.turno.toLowerCase() + ' · ' + r.dataFormatada);
