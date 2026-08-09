@@ -2,7 +2,7 @@
    Os dados continuam sincronizando pelo cache offline do próprio Firestore. */
 'use strict';
 
-const VERSAO = 'evolucao-v2';
+const VERSAO = 'evolucao-v3';
 
 // Arquivos do próprio app: sempre disponíveis offline.
 const LOCAIS = [

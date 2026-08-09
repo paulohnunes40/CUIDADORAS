@@ -29,6 +29,19 @@
   }
   DB.definirStatus = definirStatus;
 
+  // O Firestore SEMPRE entrega o primeiro snapshot do cache local
+  // (fromCache = true) antes de a resposta do servidor chegar, e volta a
+  // marcá-lo enquanto há escrita pendente. Tratar isso como "sem conexão"
+  // fazia o app dizer que estava offline com a internet funcionando.
+  // Só é offline de verdade quando o próprio aparelho está sem rede.
+  function statusDoSnapshot(snapshot){
+    if(!snapshot.metadata.fromCache) return 'online';
+    return navigator.onLine ? 'sincronizando' : 'offline';
+  }
+
+  window.addEventListener('online',  () => definirStatus('sincronizando'));
+  window.addEventListener('offline', () => definirStatus('offline'));
+
   if(typeof firebase === 'undefined'){
     console.error('SDK do Firebase não carregou (sem internet no primeiro acesso?).');
     definirStatus('offline');
@@ -105,7 +118,7 @@
   // Escuta o histórico em tempo real. Devolve a função para cancelar a escuta.
   DB.ouvirEvolucoes = function(limite, aoReceber, aoFalhar){
     return evolucoesRef.orderBy('criadoEm', 'desc').limit(limite).onSnapshot(snapshot => {
-      definirStatus(snapshot.metadata.fromCache ? 'offline' : 'online');
+      definirStatus(statusDoSnapshot(snapshot));
       aoReceber(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
     }, e => {
       erro('Erro ao conectar ao histórico compartilhado:', e);

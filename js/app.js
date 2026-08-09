@@ -157,6 +157,7 @@ function iniciar(){
   selecionarTurno(turnoInicial, indiceTurno(turnoInicial));
 
   renderHorarios();
+  registrarDelegacaoChips();
   atualizarContadores();
   registrarAutoSalvamento();
   restaurarRascunho(rascunhoSalvo);
@@ -260,14 +261,32 @@ function criarChipEl(item){
   div.setAttribute('aria-pressed', item.on ? 'true' : 'false');
   div.innerHTML = `<div class="dot">${SVG_CHECK}</div><span class="nome">${escaparHtml(item.nome)}</span>` +
     (item.fixa ? '' : '<button type="button" class="x" aria-label="Remover">✕</button>');
-  div.addEventListener('click', e => {
-    if(e.target.classList.contains('x')){ e.stopPropagation(); div.remove(); atualizarContadores(); salvarRascunho(); return; }
-    alternarChip(div);
-  });
-  div.addEventListener('keydown', e => {
-    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); alternarChip(div); }
-  });
   return div;
+}
+
+// Um único listener por lista, em vez de um por chip: assim os chips fixos
+// que já vêm escritos no index.html também respondem ao toque.
+function registrarDelegacaoChips(){
+  ['listaEstados', 'listaMedicacoes'].forEach(id => {
+    const cont = $(id);
+    cont.addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      if(e.target.closest('.x')){
+        e.stopPropagation();
+        chip.remove();
+        atualizarContadores();
+        salvarRascunho();
+        return;
+      }
+      alternarChip(chip);
+    });
+    cont.addEventListener('keydown', e => {
+      const chip = e.target.closest('.chip');
+      if(!chip) return;
+      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); alternarChip(chip); }
+    });
+  });
 }
 
 function lerChips(containerId){
@@ -742,7 +761,9 @@ async function gerarRelatorio(){
       edicaoId = null;
     } else {
       await DB.salvarEvolucao(registro);
-      aviso(DB.online ? 'Evolução salva e compartilhada.' : 'Salva no aparelho — vai sincronizar quando a internet voltar.', 'ok');
+      aviso((DB.online || navigator.onLine)
+        ? 'Evolução salva e compartilhada.'
+        : 'Salva no aparelho — vai sincronizar quando a internet voltar.', 'ok');
     }
 
     limparRascunho();
@@ -803,13 +824,20 @@ function carregarMaisHistorico(){
   aviso('Carregando mais registros...');
 }
 
+const ROTULOS_CONEXAO = {
+  online:        { classe: 'online',        texto: '🟢 sincronizado' },
+  sincronizando: { classe: 'sincronizando', texto: '🟡 sincronizando' },
+  offline:       { classe: 'offline',       texto: '🔴 sem conexão' }
+};
+
 function definirStatusConexao(estado){
+  const r = ROTULOS_CONEXAO[estado] || ROTULOS_CONEXAO.sincronizando;
   ['statusConexao', 'statusConexaoGlicemia'].forEach(id => {
     const badge = $(id);
     if(!badge) return;
-    badge.classList.remove('online', 'offline');
-    badge.classList.add(estado === 'online' ? 'online' : 'offline');
-    badge.innerText = estado === 'online' ? '🟢 sincronizado' : '🔴 sem conexão';
+    badge.classList.remove('online', 'offline', 'sincronizando');
+    badge.classList.add(r.classe);
+    badge.innerText = r.texto;
   });
 }
 
